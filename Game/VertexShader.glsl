@@ -7,5 +7,5 @@ layout(location=2) uniform mat4 model;
 
 void main()
 {
-	gl_Position = vec4(vertex, 1.0f);
+	gl_Position = proj * view * model * vec4(vertex, 1.0f);
 }
