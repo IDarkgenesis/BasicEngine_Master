@@ -13,6 +13,19 @@ ModuleRenderExercise::~ModuleRenderExercise()
 {
 }
 
+float4x4 GetLookAtMatrix(float3 cameraPosition, float3 targetPosition, float3 upVector)
+{
+
+	float3 forward = float3(targetPosition - cameraPosition).Normalized();
+	float3 right = float3(forward.Cross(upVector)).Normalized();
+	float3 up = float3(right.Cross(forward)).Normalized();
+
+	//return float4x4(float4(right, 0), float4(up, 0), -float4(forward, 0), float4(float3::zero, 1)) * float4x4(float4(1,0,0,-cameraPosition.x), float4(0,1,0, -cameraPosition.y), float4(0,0,1, -cameraPosition.z), float4(0,0,0,1));
+	float4x4 viewMatrix = float4x4(float4(right, 0), float4(up, 0), -float4(forward, 0), float4(float3::zero, 1)) * float4x4(float4(1, 0, 0, -cameraPosition.x), float4(0, 1, 0, -cameraPosition.y), float4(0, 0, 1, -cameraPosition.z), float4(0, 0, 0, 1));
+	viewMatrix.Transpose();
+	return viewMatrix;
+}
+
 bool ModuleRenderExercise::Init()
 {
 	// Creating shaders and program
@@ -41,12 +54,12 @@ update_status ModuleRenderExercise::Update()
 {
 	
 	// Creating matrices for rendering
-	float4x4 model, view, proj;
+	float4x4 model, view, proj, view2;
 
 	Frustum frustum;
 	frustum.type = FrustumType::PerspectiveFrustum;
 
-	frustum.pos = float3(0,0,5);
+	frustum.pos = float3(0,1,5);
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
 
@@ -55,13 +68,18 @@ update_status ModuleRenderExercise::Update()
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f)) * frustum.AspectRatio();
 
+	
+
 	proj = frustum.ProjectionMatrix();
+
 	view = frustum.ViewMatrix();
+	view2 = GetLookAtMatrix(frustum.pos, float3(0,-1,0), float3::unitY);
+	
 	model = float4x4::identity;
 
 	glUseProgram(Program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &proj[0][0]);
-	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
+	glUniformMatrix4fv(1, 1, GL_TRUE, &view2[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, Vbo);
@@ -81,3 +99,4 @@ bool ModuleRenderExercise::CleanUp()
 
 	return true;
 }
+

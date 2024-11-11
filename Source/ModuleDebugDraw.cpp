@@ -613,7 +613,7 @@ update_status  ModuleDebugDraw::Update()
     Frustum frustum;
     frustum.type = FrustumType::PerspectiveFrustum;
 
-    frustum.pos = float3(0, 0, 5);
+    frustum.pos = float3(0, 1, 5);
     frustum.front = -float3::unitZ;
     frustum.up = float3::unitY;
 
@@ -626,7 +626,7 @@ update_status  ModuleDebugDraw::Update()
     float4x4 view = frustum.ViewMatrix();
 
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
-    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Blue);
 
     Draw(view, proj, SCREEN_WIDTH, SCREEN_HEIGHT);
 
