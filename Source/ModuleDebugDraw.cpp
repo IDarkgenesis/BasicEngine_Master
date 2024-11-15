@@ -1,6 +1,8 @@
 #include "Globals.h"
 #include "ModuleDebugDraw.h"
 #include "MathGeoLib.h"
+#include "Application.h"
+#include "ModuleCamera.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "DebugDraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
@@ -610,20 +612,8 @@ bool ModuleDebugDraw::CleanUp()
 update_status  ModuleDebugDraw::Update()
 {
 
-    Frustum frustum;
-    frustum.type = FrustumType::PerspectiveFrustum;
-
-    frustum.pos = float3(0, 1, 5);
-    frustum.front = -float3::unitZ;
-    frustum.up = float3::unitY;
-
-    frustum.nearPlaneDistance = 0.1f;
-    frustum.farPlaneDistance = 100.0f;
-    frustum.verticalFov = math::pi / 4.0f;
-    frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f)) * frustum.AspectRatio();
-
-    float4x4 proj = frustum.ProjectionMatrix();
-    float4x4 view = frustum.ViewMatrix();
+    float4x4 proj = App->GetCamera()->GetProjectionMatrix();
+    float4x4 view = App->GetCamera()->GetLookAtMatrix();
 
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Blue);
