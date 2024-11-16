@@ -39,7 +39,7 @@ bool ModuleCamera::CleanUp()
 	return false;
 }
 
-float4x4 ModuleCamera::GetLookAtMatrix(float3 cameraPosition, float3 targetPosition, float3 upVector)
+float4x4 ModuleCamera::GetLookAtMatrix(const float3& cameraPosition, const float3& targetPosition, const float3& upVector)
 {
 	float3 forward = float3(targetPosition - cameraPosition).Normalized();
 	float3 right = float3(forward.Cross(upVector)).Normalized();
@@ -51,7 +51,7 @@ float4x4 ModuleCamera::GetLookAtMatrix(float3 cameraPosition, float3 targetPosit
 	return viewMatrix;
 }
 
-float4x4 ModuleCamera::GetLookAtMatrix(float3 targetPosition)
+float4x4 ModuleCamera::GetLookAtMatrix(const float3& targetPosition) const
 {
 	float3 forward = float3(targetPosition - camera.pos).Normalized();
 	float3 right = float3(forward.Cross(camera.up)).Normalized();
@@ -63,7 +63,7 @@ float4x4 ModuleCamera::GetLookAtMatrix(float3 targetPosition)
 	return viewMatrix;
 }
 
-float4x4 ModuleCamera::GetLookAtMatrix()
+float4x4 ModuleCamera::GetLookAtMatrix() const
 {
 	float3 forward = float3(target - camera.pos).Normalized();
 	float3 right = float3(forward.Cross(camera.up)).Normalized();
@@ -75,12 +75,12 @@ float4x4 ModuleCamera::GetLookAtMatrix()
 	return viewMatrix;
 }
 
-float4x4 ModuleCamera::GetViewMatrix()
+float4x4 ModuleCamera::GetViewMatrix() const
 {
 	return camera.ViewMatrix();
 }
 
-float4x4 ModuleCamera::GetProjectionMatrix()
+float4x4 ModuleCamera::GetProjectionMatrix() const
 {
 	return camera.ProjectionMatrix();
 }
@@ -106,5 +106,26 @@ void ModuleCamera::SetAspectRatio(float newAspectRatio)
 
 void ModuleCamera::SetPlaneDistances(float zNear, float zFar)
 {
+	camera.nearPlaneDistance = zNear;
+	camera.farPlaneDistance = zFar;
+}
 
+void ModuleCamera::SetCameraPosition(const float3& newPosition)
+{
+	camera.pos = newPosition;
+}
+
+void ModuleCamera::SetCameraFront(const float3& newFront)
+{
+	camera.front = newFront;
+}
+
+void ModuleCamera::SetCameraUp(const float3& newUp)
+{
+	camera.up = newUp;
+}
+
+void ModuleCamera::SetCameraTarget(const float3& newTarget)
+{
+	target = newTarget;
 }

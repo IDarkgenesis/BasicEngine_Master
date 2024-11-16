@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "SDL.h"
 #include "glew-2.1.0/include/GL/glew.h"
+#include "ModuleCamera.h"
 
 
 ModuleOpenGL::ModuleOpenGL()
@@ -92,5 +93,7 @@ bool ModuleOpenGL::CleanUp()
 
 void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
+	float aspectRatio = (float)width / height;
+	App->GetCamera()->SetAspectRatio(aspectRatio);
 }
 
