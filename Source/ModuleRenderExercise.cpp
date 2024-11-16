@@ -48,6 +48,10 @@ update_status ModuleRenderExercise::Update()
 	view = App->GetCamera()->GetLookAtMatrix();
 	
 	model = float4x4::identity;
+	//model = float4x4::FromTRS(
+	//			float3(2.0f, 0.0f, 0.0f),
+	//			float4x4::RotateZ(pi / 4.0f),
+	//			float3(2.0f, 1.0f, 1.0f));
 
 	glUseProgram(Program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &proj[0][0]);
