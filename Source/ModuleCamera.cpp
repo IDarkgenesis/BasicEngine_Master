@@ -3,7 +3,6 @@
 #include "MathGeoLib.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
-#include<memory>
 
 ModuleCamera::ModuleCamera()
 {
@@ -53,6 +52,8 @@ update_status ModuleCamera::Update()
 	if (downKeyPressed && (currentPitchAngle + cameraRotationAngle) < maximumPositivePitch)
 	{
 		currentPitchAngle += cameraRotationAngle;
+
+		float3 right = camera.front.Normalized().Cross(camera.up.Normalized()).Normalized();
 
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(1.f, 0.f,						 0.f),
@@ -135,7 +136,6 @@ update_status ModuleCamera::Update()
 
 	inputModule = nullptr;
 	delete inputModule;
-
 	return UPDATE_CONTINUE;
 }
 
