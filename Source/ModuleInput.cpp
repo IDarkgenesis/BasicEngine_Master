@@ -4,12 +4,19 @@
 #include "ModuleOpenGL.h"
 #include "SDL/include/SDL.h"
 
+#define MAX_KEYS 300
+
 ModuleInput::ModuleInput()
-{}
+{
+    keyboard = new KeyState[MAX_KEYS];
+    memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
+}
 
 // Destructor
 ModuleInput::~ModuleInput()
-{}
+{
+    RELEASE_ARRAY(keyboard);
+}
 
 // Called before render is available
 bool ModuleInput::Init()
@@ -25,6 +32,32 @@ bool ModuleInput::Init()
 	}
 
 	return ret;
+}
+
+update_status ModuleInput::PreUpdate()
+{
+	// Checking and updating keyboard key states
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+	for (int i = 0; i < MAX_KEYS; ++i)
+	{
+		if (keys[i] == 1)
+		{
+			if (keyboard[i] == KEY_IDLE)
+				keyboard[i] = KEY_DOWN;
+			else
+				keyboard[i] = KEY_REPEAT;
+		}
+		else
+		{
+			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+				keyboard[i] = KEY_UP;
+			else
+				keyboard[i] = KEY_IDLE;
+		}
+	}
+
+	return UPDATE_CONTINUE;
 }
 
 // Called every draw update
@@ -44,8 +77,6 @@ update_status ModuleInput::Update()
                 break;
         }
     }
-
-    keyboard = SDL_GetKeyboardState(NULL);
 
     return UPDATE_CONTINUE;
 }

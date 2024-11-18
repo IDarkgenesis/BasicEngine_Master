@@ -45,7 +45,7 @@ update_status ModuleRenderExercise::Update()
 	float4x4 model, view, proj;
 
 	proj = App->GetCamera()->GetProjectionMatrix();
-	view = App->GetCamera()->GetLookAtMatrix();
+	view = App->GetCamera()->GetViewMatrix();
 	
 	model = float4x4::identity;
 	//model = float4x4::FromTRS(

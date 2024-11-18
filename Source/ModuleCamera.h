@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include "MathGeoLib/include/Geometry/Frustum.h"
 
+const float PI = 3.14159265359;
+
 class ModuleCamera : public Module
 {
 public:
@@ -34,6 +36,10 @@ private:
 
 	float3 target;
 
-	float cameraMoveSpeed = 2.0f;
+	float cameraMoveSpeed = 0.05f;
+	float cameraRotationAngle = PI / 180.f;
+	float currentPitchAngle = 0.f;
+	float maximumPositivePitch = 89.f * (PI / 180.f);
+	float maximumNegativePitch = -89.f * (PI / 180.f);
 };
 

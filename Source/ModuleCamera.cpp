@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "MathGeoLib.h"
 #include "ModuleWindow.h"
+#include "ModuleInput.h"
+#include<memory>
 
 ModuleCamera::ModuleCamera()
 {
@@ -31,6 +33,109 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update()
 {
+	ModuleInput* inputModule = App->GetInput();
+	
+	if(inputModule == nullptr) return UPDATE_CONTINUE;
+
+	bool shiftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_REPEAT;
+	bool wKeyPressed = inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT;
+	bool sKeyPressed = inputModule->GetKey(SDL_SCANCODE_S) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT;
+	bool aKeyPressed = inputModule->GetKey(SDL_SCANCODE_A) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT;
+	bool dKeyPressed = inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT;
+	bool qKeyPressed = inputModule->GetKey(SDL_SCANCODE_Q) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_Q) == KeyState::KEY_REPEAT;
+	bool eKeyPressed = inputModule->GetKey(SDL_SCANCODE_E) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_E) == KeyState::KEY_REPEAT;
+	bool rgihtKeyPressed = inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_REPEAT;
+	bool leftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_REPEAT;
+	bool upKeyPressed = inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_REPEAT;
+	bool downKeyPressed = inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_REPEAT;
+
+	//Positive Pitch Rotation
+	if (downKeyPressed && (currentPitchAngle + cameraRotationAngle) < maximumPositivePitch)
+	{
+		currentPitchAngle += cameraRotationAngle;
+
+		float3x3 rotationDeltaMatrix = float3x3(
+			float3(1.f, 0.f,						 0.f),
+			float3(0,	cosf(cameraRotationAngle),	-sinf(cameraRotationAngle)),
+			float3(0,	sinf(cameraRotationAngle),	cosf(cameraRotationAngle))
+		);
+
+		float3 oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrix.MulDir(oldFront);
+
+		float3 oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrix.MulDir(oldUp);
+
+	}
+
+	// Negative Pitch Rotation
+	if (upKeyPressed && (currentPitchAngle - cameraRotationAngle) > maximumNegativePitch)
+	{
+		currentPitchAngle -= cameraRotationAngle;
+
+		float3x3 rotationDeltaMatrix = float3x3(
+			float3(1.f, 0.f, 0.f),
+			float3(0, cosf(-cameraRotationAngle), -sinf(-cameraRotationAngle)),
+			float3(0, sinf(-cameraRotationAngle), cosf(-cameraRotationAngle))
+		);
+
+		float3 oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrix.MulDir(oldFront);
+
+		float3 oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrix.MulDir(oldUp);
+
+	}
+
+	// Positive Yaw Rotation
+	if (rgihtKeyPressed)
+	{
+		float3x3 rotationDeltaMatrix = float3x3(
+			float3(cosf(cameraRotationAngle),	0.f,	sinf(cameraRotationAngle)),
+			float3(0.f,							1.f,	0.f),
+			float3(-sinf(cameraRotationAngle),	0.f,	cosf(cameraRotationAngle))
+		);
+
+		float3 oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrix.MulDir(oldFront);
+
+		float3 oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrix.MulDir(oldUp);
+	}
+
+	// Negative Yaw Rotation
+	if (leftKeyPressed)
+	{
+		float3x3 rotationDeltaMatrix = float3x3(
+			float3(cosf(-cameraRotationAngle), 0.f, sinf(-cameraRotationAngle)),
+			float3(0.f, 1.f, 0.f),
+			float3(-sinf(-cameraRotationAngle), 0.f, cosf(-cameraRotationAngle))
+		);
+
+		float3 oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrix.MulDir(oldFront);
+
+		float3 oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrix.MulDir(oldUp);
+	}
+
+	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * 2.f : cameraMoveSpeed;
+
+	if (wKeyPressed) camera.pos += finalCameraSpeed * camera.front;
+
+	if (sKeyPressed) camera.pos -= finalCameraSpeed * camera.front;
+	
+	if (aKeyPressed) camera.pos -= finalCameraSpeed * camera.WorldRight();
+	
+	if (dKeyPressed) camera.pos += finalCameraSpeed * camera.WorldRight();
+
+	if (qKeyPressed) camera.pos += finalCameraSpeed * float3::unitY;
+
+	if (eKeyPressed) camera.pos -= finalCameraSpeed * float3::unitY;
+
+	inputModule = nullptr;
+	delete inputModule;
+
 	return UPDATE_CONTINUE;
 }
 

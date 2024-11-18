@@ -613,7 +613,7 @@ update_status  ModuleDebugDraw::Update()
 {
 
     float4x4 proj = App->GetCamera()->GetProjectionMatrix();
-    float4x4 view = App->GetCamera()->GetLookAtMatrix();
+    float4x4 view = App->GetCamera()->GetViewMatrix();
 
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Blue);
