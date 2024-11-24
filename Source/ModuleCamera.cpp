@@ -143,6 +143,7 @@ update_status ModuleCamera::Update()
 	if (rgihtKeyPressed)
 	{
 		currentYawAngle += cameraRotationAngle;
+		if (currentYawAngle > maximumYawAngle) currentYawAngle -= maximumYawAngle;
 
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(cosf(cameraRotationAngle),	0.f,	sinf(cameraRotationAngle)),
@@ -161,6 +162,7 @@ update_status ModuleCamera::Update()
 	if (leftKeyPressed)
 	{
 		currentYawAngle -= cameraRotationAngle;
+		if (currentYawAngle < minimumYawAngle) currentYawAngle += maximumYawAngle;
 
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(cosf(-cameraRotationAngle), 0.f, sinf(-cameraRotationAngle)),
