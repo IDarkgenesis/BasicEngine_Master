@@ -16,8 +16,9 @@ ModuleCamera::ModuleCamera()
 
 	camera.nearPlaneDistance = 0.1f;
 	camera.farPlaneDistance = 100.f;
-	camera.verticalFov = math::pi / 4.0f;
-	camera.horizontalFov = 2.f * atanf(tanf(camera.verticalFov * 0.5f)) * (SCREEN_WIDTH / SCREEN_HEIGHT);
+
+	camera.horizontalFov = 90.f * DEGTORAD;
+	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)SCREEN_HEIGHT / (float)SCREEN_WIDTH));;
 }
 
 ModuleCamera::~ModuleCamera()
@@ -47,6 +48,9 @@ update_status ModuleCamera::Update()
 	bool leftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_REPEAT;
 	bool upKeyPressed = inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_REPEAT;
 	bool downKeyPressed = inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_REPEAT;
+	bool leftClick = inputModule->GetMouseButtonDown(SDL_BUTTON_LEFT);
+	bool rightClick = inputModule->GetMouseButtonDown(SDL_BUTTON_RIGHT);
+	const float2 mouseMove = inputModule->GetMouseMotion();
 
 	//Positive Pitch Rotation
 	if (downKeyPressed && (currentPitchAngle + cameraRotationAngle) < maximumPositivePitch)
@@ -258,7 +262,7 @@ void ModuleCamera::SetFOV(float newHorizontalFov)
 
 	camera.horizontalFov = newHorizontalFov;
 
-	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * (float)(*height/ *width));
+	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * (float)(*height / *width));
 }
 
 void ModuleCamera::SetAspectRatio(float newAspectRatio)

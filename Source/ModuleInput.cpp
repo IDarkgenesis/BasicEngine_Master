@@ -8,10 +8,11 @@
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput()
+ModuleInput::ModuleInput() : Module(), mouse(float2::zero), mouse_motion(float2::zero)
 {
     keyboard = new KeyState[MAX_KEYS];
     memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
+	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 }
 
 // Destructor
@@ -59,28 +60,51 @@ update_status ModuleInput::PreUpdate()
 		}
 	}
 
+	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
+	{
+		if (mouse_buttons[i] == KEY_DOWN)
+			mouse_buttons[i] = KEY_REPEAT;
+
+		if (mouse_buttons[i] == KEY_UP)
+			mouse_buttons[i] = KEY_IDLE;
+	}
+
+	SDL_Event sdlEvent;
+
+
+	while (SDL_PollEvent(&sdlEvent) != 0)
+	{
+		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+		switch (sdlEvent.type)
+		{
+		case SDL_QUIT:
+			return UPDATE_STOP;
+		case SDL_WINDOWEVENT:
+			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+				App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			mouse_buttons[sdlEvent.button.button - 1] = KEY_DOWN;
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			mouse_buttons[sdlEvent.button.button - 1] = KEY_UP;
+			break;
+		case SDL_MOUSEMOTION:
+			mouse_motion.x = sdlEvent.motion.xrel / 2;
+			mouse_motion.y = sdlEvent.motion.yrel / 2;
+			mouse.x = sdlEvent.motion.x / 2;
+			mouse.y = sdlEvent.motion.y / 2;
+			break;
+		}
+	}
+
 	return UPDATE_CONTINUE;
 }
 
 // Called every draw update
 update_status ModuleInput::Update()
 {
-    SDL_Event sdlEvent;
-
-    while (SDL_PollEvent(&sdlEvent) != 0)
-    {
-		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
-        switch (sdlEvent.type)
-        {
-            case SDL_QUIT:
-                return UPDATE_STOP;
-            case SDL_WINDOWEVENT:
-                if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-                    App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-                break;
-        }
-    }
-
     return UPDATE_CONTINUE;
 }
 
@@ -90,4 +114,14 @@ bool ModuleInput::CleanUp()
 	GLOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+const float2& ModuleInput::GetMouseMotion() const
+{
+	return mouse_motion;
+}
+
+const float2& ModuleInput::GetMousePosition() const
+{
+	return mouse;
 }

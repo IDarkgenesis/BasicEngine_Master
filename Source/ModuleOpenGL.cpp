@@ -93,7 +93,7 @@ bool ModuleOpenGL::CleanUp()
 
 void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
-	float aspectRatio = (float)width / height;
+	float aspectRatio = (float)height / width;
 	App->GetCamera()->SetAspectRatio(aspectRatio);
 }
 
