@@ -39,6 +39,7 @@ private:
 	float cameraMoveSpeed = 0.05f;
 	float cameraRotationAngle = PI / 180.f;
 	float currentPitchAngle = 0.f;
+	float currentYawAngle = 0.f;
 	float maximumPositivePitch = 89.f * (PI / 180.f);
 	float maximumNegativePitch = -89.f * (PI / 180.f);
 };

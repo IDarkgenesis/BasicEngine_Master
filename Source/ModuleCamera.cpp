@@ -53,19 +53,44 @@ update_status ModuleCamera::Update()
 	{
 		currentPitchAngle += cameraRotationAngle;
 
-		float3 right = camera.front.Normalized().Cross(camera.up.Normalized()).Normalized();
+		// YAW ROTATION MATRIX TO MOVE TO CORRECT POS
+		float3x3 rotationDeltaMatrixYAW = float3x3(
+			float3(cosf(-currentYawAngle), 0.f, sinf(-currentYawAngle)),
+			float3(0.f, 1.f, 0.f),
+			float3(-sinf(-currentYawAngle), 0.f, cosf(-currentYawAngle))
+		);
 
+		float3 oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrixYAW.MulDir(oldFront);
+
+		float3 oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrixYAW.MulDir(oldUp);
+
+		// APPLY PITCH ON X AXIS
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(1.f, 0.f,						 0.f),
 			float3(0,	cosf(cameraRotationAngle),	-sinf(cameraRotationAngle)),
 			float3(0,	sinf(cameraRotationAngle),	cosf(cameraRotationAngle))
 		);
 
-		float3 oldFront = camera.front.Normalized();
+		oldFront = camera.front.Normalized();
 		camera.front = rotationDeltaMatrix.MulDir(oldFront);
 
-		float3 oldUp = camera.up.Normalized();
+		oldUp = camera.up.Normalized();
 		camera.up = rotationDeltaMatrix.MulDir(oldUp);
+
+		// RETURN CAMERA TO CORRECT YAW
+		rotationDeltaMatrixYAW = float3x3(
+			float3(cosf(currentYawAngle), 0.f, sinf(currentYawAngle)),
+			float3(0.f, 1.f, 0.f),
+			float3(-sinf(currentYawAngle), 0.f, cosf(currentYawAngle))
+		);
+
+		oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrixYAW.MulDir(oldFront);
+
+		oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrixYAW.MulDir(oldUp);
 
 	}
 
@@ -74,23 +99,51 @@ update_status ModuleCamera::Update()
 	{
 		currentPitchAngle -= cameraRotationAngle;
 
+		// YAW ROTATION MATRIX TO MOVE TO CORRECT POS
+		float3x3 rotationDeltaMatrixYAW = float3x3(
+			float3(cosf(-currentYawAngle), 0.f, sinf(-currentYawAngle)),
+			float3(0.f, 1.f, 0.f),
+			float3(-sinf(-currentYawAngle), 0.f, cosf(-currentYawAngle))
+		);
+
+		float3 oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrixYAW.MulDir(oldFront);
+
+		float3 oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrixYAW.MulDir(oldUp);
+		
+		// APPLY PITCH ON X AXIS
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(1.f, 0.f, 0.f),
 			float3(0, cosf(-cameraRotationAngle), -sinf(-cameraRotationAngle)),
 			float3(0, sinf(-cameraRotationAngle), cosf(-cameraRotationAngle))
 		);
 
-		float3 oldFront = camera.front.Normalized();
+		oldFront = camera.front.Normalized();
 		camera.front = rotationDeltaMatrix.MulDir(oldFront);
 
-		float3 oldUp = camera.up.Normalized();
+		oldUp = camera.up.Normalized();
 		camera.up = rotationDeltaMatrix.MulDir(oldUp);
 
+		// RETURN CAMERA TO CORRECT YAW
+		rotationDeltaMatrixYAW = float3x3(
+			float3(cosf(currentYawAngle), 0.f, sinf(currentYawAngle)),
+			float3(0.f, 1.f, 0.f),
+			float3(-sinf(currentYawAngle), 0.f, cosf(currentYawAngle))
+		);
+
+		oldFront = camera.front.Normalized();
+		camera.front = rotationDeltaMatrixYAW.MulDir(oldFront);
+
+		oldUp = camera.up.Normalized();
+		camera.up = rotationDeltaMatrixYAW.MulDir(oldUp);
 	}
 
 	// Positive Yaw Rotation
 	if (rgihtKeyPressed)
 	{
+		currentYawAngle += cameraRotationAngle;
+
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(cosf(cameraRotationAngle),	0.f,	sinf(cameraRotationAngle)),
 			float3(0.f,							1.f,	0.f),
@@ -107,6 +160,8 @@ update_status ModuleCamera::Update()
 	// Negative Yaw Rotation
 	if (leftKeyPressed)
 	{
+		currentYawAngle -= cameraRotationAngle;
+
 		float3x3 rotationDeltaMatrix = float3x3(
 			float3(cosf(-cameraRotationAngle), 0.f, sinf(-cameraRotationAngle)),
 			float3(0.f, 1.f, 0.f),
