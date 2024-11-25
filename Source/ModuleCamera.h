@@ -38,8 +38,6 @@ private:
 
 	const float maximumPositivePitch = 89.f * (PI / 180.f);
 	const float maximumNegativePitch = -89.f * (PI / 180.f);
-	const float maximumYawAngle = 360 * (PI / 180.f);
-	const float minimumYawAngle = -maximumYawAngle;
 	const float DEGTORAD = PI / 180.f;
 
 	float cameraMoveSpeed = 0.05f;

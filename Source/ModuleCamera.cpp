@@ -95,9 +95,6 @@ update_status ModuleCamera::Update()
 	// Right Yaw Rotation
 	if (rgihtKeyPressed)
 	{
-		currentYawAngle += cameraRotationAngle;
-		if (currentYawAngle > maximumYawAngle) currentYawAngle -= maximumYawAngle;
-
 		float theta = -cameraRotationAngle / 2.f;
 		Quat quatRotator = Quat(0 * sinf(theta), 1 * sinf(theta), 0 * sinf(theta), cosf(theta));
 
@@ -111,9 +108,6 @@ update_status ModuleCamera::Update()
 	// Left Yaw Rotation
 	if (leftKeyPressed)
 	{
-		currentYawAngle -= cameraRotationAngle;
-		if (currentYawAngle < minimumYawAngle) currentYawAngle += maximumYawAngle;
-
 		float theta = cameraRotationAngle / 2.f;
 		Quat quatRotator = Quat(0 * sinf(theta), 1 * sinf(theta), 0 * sinf(theta), cosf(theta));
 
