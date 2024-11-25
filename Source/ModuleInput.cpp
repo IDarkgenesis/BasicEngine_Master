@@ -41,7 +41,9 @@ update_status ModuleInput::PreUpdate()
 {
 	// Checking and updating keyboard key states
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-
+	mouse_motion.x = 0;
+	mouse_motion.y = 0;
+	
 	for (int i = 0; i < MAX_KEYS; ++i)
 	{
 		if (keys[i] == 1)
@@ -91,10 +93,12 @@ update_status ModuleInput::PreUpdate()
 			mouse_buttons[sdlEvent.button.button - 1] = KEY_UP;
 			break;
 		case SDL_MOUSEMOTION:
-			mouse_motion.x = sdlEvent.motion.xrel / 2;
-			mouse_motion.y = sdlEvent.motion.yrel / 2;
-			mouse.x = sdlEvent.motion.x / 2;
-			mouse.y = sdlEvent.motion.y / 2;
+			if (GetMouseButtonDown(SDL_BUTTON_RIGHT) == KeyState::KEY_REPEAT) {
+				mouse_motion.x = sdlEvent.motion.xrel / 2.f;
+				mouse_motion.y = sdlEvent.motion.yrel / 2.f;
+			}
+			mouse.x = sdlEvent.motion.x / 2.f;
+			mouse.y = sdlEvent.motion.y / 2.f;
 			break;
 		}
 	}

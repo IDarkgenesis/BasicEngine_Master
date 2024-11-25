@@ -44,5 +44,8 @@ private:
 	float cameraRotationAngle = PI / 180.f;
 	float currentPitchAngle = 0.f;
 	float currentYawAngle = 0.f;
+
+	void RotateYaw(float deltaAngle);
+	void RotatePitch(float deltaAngle);
 };
 

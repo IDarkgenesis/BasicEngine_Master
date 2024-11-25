@@ -57,19 +57,7 @@ update_status ModuleCamera::Update()
 	{
 		currentPitchAngle += cameraRotationAngle;
 
-		float3 normFront = camera.front.Normalized();
-		float3 normUp = camera.up.Normalized();
-		
-		float3 right = normFront.Cross(normUp).Normalized();
-		float theta = -cameraRotationAngle / 2.f;
-
-		Quat quatRotator = Quat(right.x * sinf(theta), right.y * sinf(theta), right.z * sinf(theta), cosf(theta));
-
-		float3 oldFront = camera.front.Normalized();
-		camera.front = quatRotator.Mul(oldFront);
-
-		float3 oldUp = camera.up.Normalized();
-		camera.up = quatRotator.Mul(oldUp);
+		RotatePitch(-cameraRotationAngle);
 	}
 
 	// Up Pitch Rotation
@@ -77,45 +65,35 @@ update_status ModuleCamera::Update()
 	{
 		currentPitchAngle -= cameraRotationAngle;
 
-		float3 normFront = camera.front.Normalized();
-		float3 normUp = camera.up.Normalized();
-
-		float3 right = normFront.Cross(normUp).Normalized();
-		float theta = cameraRotationAngle / 2.f;
-
-		Quat quatRotator = Quat(right.x * sinf(theta), right.y * sinf(theta), right.z * sinf(theta), cosf(theta));
-
-		float3 oldFront = camera.front.Normalized();
-		camera.front = quatRotator.Mul(oldFront);
-
-		float3 oldUp = camera.up.Normalized();
-		camera.up = quatRotator.Mul(oldUp);
+		RotatePitch(cameraRotationAngle);
 	}
 
 	// Right Yaw Rotation
 	if (rgihtKeyPressed)
 	{
-		float theta = -cameraRotationAngle / 2.f;
-		Quat quatRotator = Quat(0 * sinf(theta), 1 * sinf(theta), 0 * sinf(theta), cosf(theta));
-
-		float3 oldFront = camera.front.Normalized();
-		camera.front = quatRotator.Mul(oldFront);
-
-		float3 oldUp = camera.up.Normalized();
-		camera.up = quatRotator.Mul(oldUp);
+		RotateYaw(-cameraRotationAngle);
 	}
 
 	// Left Yaw Rotation
 	if (leftKeyPressed)
 	{
-		float theta = cameraRotationAngle / 2.f;
-		Quat quatRotator = Quat(0 * sinf(theta), 1 * sinf(theta), 0 * sinf(theta), cosf(theta));
+		RotateYaw(cameraRotationAngle);
+	}
 
-		float3 oldFront = camera.front.Normalized();
-		camera.front = quatRotator.Mul(oldFront);
-
-		float3 oldUp = camera.up.Normalized();
-		camera.up = quatRotator.Mul(oldUp);
+	if (rightClick) {
+		const float2 mouseMotion = inputModule->GetMouseMotion();
+		if (mouseMotion.y > 0 && (currentPitchAngle + cameraRotationAngle) < maximumPositivePitch)
+		{
+			currentPitchAngle += cameraRotationAngle;
+			RotatePitch(-cameraRotationAngle);
+		}
+		else if (mouseMotion.y < 0 && (currentPitchAngle - cameraRotationAngle) > maximumNegativePitch)
+		{
+			currentPitchAngle -= cameraRotationAngle;
+			RotatePitch(cameraRotationAngle);
+		}
+		if (mouseMotion.x > 0) RotateYaw(-cameraRotationAngle);
+		if (mouseMotion.x < 0) RotateYaw(cameraRotationAngle);
 	}
 
 	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * 2.f : cameraMoveSpeed;
@@ -231,4 +209,33 @@ void ModuleCamera::SetCameraUp(const float3& newUp)
 void ModuleCamera::SetCameraTarget(const float3& newTarget)
 {
 	target = newTarget;
+}
+
+void ModuleCamera::RotateYaw(float deltaAngle)
+{
+	float theta = deltaAngle / 2.f;
+	Quat quatRotator = Quat(0 * sinf(theta), 1 * sinf(theta), 0 * sinf(theta), cosf(theta));
+
+	float3 oldFront = camera.front.Normalized();
+	camera.front = quatRotator.Mul(oldFront);
+
+	float3 oldUp = camera.up.Normalized();
+	camera.up = quatRotator.Mul(oldUp);
+}
+
+void ModuleCamera::RotatePitch(float deltaAngle)
+{
+	float3 normFront = camera.front.Normalized();
+	float3 normUp = camera.up.Normalized();
+
+	float3 right = normFront.Cross(normUp).Normalized();
+	float theta = deltaAngle / 2.f;
+
+	Quat quatRotator = Quat(right.x * sinf(theta), right.y * sinf(theta), right.z * sinf(theta), cosf(theta));
+
+	float3 oldFront = camera.front.Normalized();
+	camera.front = quatRotator.Mul(oldFront);
+
+	float3 oldUp = camera.up.Normalized();
+	camera.up = quatRotator.Mul(oldUp);
 }
