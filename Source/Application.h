@@ -13,6 +13,7 @@ class ModuleRenderExercise;
 class ModuleDebugDraw;
 class ModuleCamera;
 class ModuleEditor;
+class ModuleTexture;
 
 class Application
 {
@@ -29,6 +30,7 @@ public:
     ModuleWindow* GetWindow() { return window; }
     ModuleInput*  GetInput() { return input; }
     ModuleProgram*  GetProgram() { return program; }
+    ModuleTexture*  GetTexture() { return texture; }
 
     ModuleRenderExercise*  GetRenderExercise() { return renderExercise; }
     ModuleCamera* GetCamera() { return camera; }
@@ -39,6 +41,7 @@ private:
     ModuleWindow* window = nullptr;
     ModuleInput* input = nullptr;
     ModuleProgram* program = nullptr;
+    ModuleTexture* texture = nullptr;
 
     ModuleRenderExercise* renderExercise = nullptr;
     ModuleDebugDraw* debugDraw = nullptr;

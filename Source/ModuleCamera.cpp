@@ -110,8 +110,6 @@ update_status ModuleCamera::Update()
 
 	if (eKeyPressed) camera.pos -= finalCameraSpeed * float3::unitY;
 
-	inputModule = nullptr;
-	delete inputModule;
 	return UPDATE_CONTINUE;
 }
 

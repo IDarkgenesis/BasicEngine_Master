@@ -5,6 +5,8 @@
 #include "ModuleProgram.h"
 #include "MathGeoLib.h"
 #include "ModuleCamera.h"
+#include "ModuleTexture.h"
+#include "DirectXTex/DirectXTex.h"
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
@@ -27,6 +29,13 @@ bool ModuleRenderExercise::Init()
 
 	free(vertexShader);
 	free(fragmentShader);
+
+	// Texture loading
+	auto baboonPath = L"baboon.ppm";
+	DirectX::TexMetadata metadata;
+	DirectX::ScratchImage image;
+
+	bool imageLoaded = App->GetTexture()->LoadTexture(baboonPath, metadata, image);
 
 	// Creating VBO for triangle
 	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
