@@ -36,6 +36,7 @@ update_status ModuleCamera::Update(float deltaTime)
 	ModuleInput* inputModule = App->GetInput();
 	
 	if(inputModule == nullptr) return UPDATE_CONTINUE;
+	
 
 	bool shiftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_REPEAT;
 	bool wKeyPressed = inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT;
@@ -52,51 +53,53 @@ update_status ModuleCamera::Update(float deltaTime)
 	bool rightClick = inputModule->GetMouseButtonDown(SDL_BUTTON_RIGHT);
 	const float2 mouseMove = inputModule->GetMouseMotion();
 
+	float deltaRotationAngle = cameraRotationAngle * deltaTime;
+	
 	// Down Pitch Rotation
-	if (downKeyPressed && (currentPitchAngle + cameraRotationAngle) < maximumPositivePitch)
+	if (downKeyPressed && (currentPitchAngle + deltaRotationAngle) < maximumPositivePitch)
 	{
-		currentPitchAngle += cameraRotationAngle;
+		currentPitchAngle += deltaRotationAngle;
 
-		RotatePitch(-cameraRotationAngle);
+		RotatePitch(-deltaRotationAngle);
 	}
 
 	// Up Pitch Rotation
-	if (upKeyPressed && (currentPitchAngle - cameraRotationAngle) > maximumNegativePitch)
+	if (upKeyPressed && (currentPitchAngle - deltaRotationAngle) > maximumNegativePitch)
 	{
-		currentPitchAngle -= cameraRotationAngle;
+		currentPitchAngle -= deltaRotationAngle;
 
-		RotatePitch(cameraRotationAngle);
+		RotatePitch(deltaRotationAngle);
 	}
 
 	// Right Yaw Rotation
 	if (rgihtKeyPressed)
 	{
-		RotateYaw(-cameraRotationAngle);
+		RotateYaw(-deltaRotationAngle);
 	}
 
 	// Left Yaw Rotation
 	if (leftKeyPressed)
 	{
-		RotateYaw(cameraRotationAngle);
+		RotateYaw(deltaRotationAngle);
 	}
 
 	if (rightClick) {
 		const float2 mouseMotion = inputModule->GetMouseMotion();
-		if (mouseMotion.y > 0 && (currentPitchAngle + cameraRotationAngle) < maximumPositivePitch)
+		if (mouseMotion.y > 0 && (currentPitchAngle + deltaRotationAngle) < maximumPositivePitch)
 		{
-			currentPitchAngle += cameraRotationAngle;
-			RotatePitch(-cameraRotationAngle);
+			currentPitchAngle += deltaRotationAngle;
+			RotatePitch(-deltaRotationAngle);
 		}
-		else if (mouseMotion.y < 0 && (currentPitchAngle - cameraRotationAngle) > maximumNegativePitch)
+		else if (mouseMotion.y < 0 && (currentPitchAngle - deltaRotationAngle) > maximumNegativePitch)
 		{
-			currentPitchAngle -= cameraRotationAngle;
-			RotatePitch(cameraRotationAngle);
+			currentPitchAngle -= deltaRotationAngle;
+			RotatePitch(deltaRotationAngle);
 		}
-		if (mouseMotion.x > 0) RotateYaw(-cameraRotationAngle);
-		if (mouseMotion.x < 0) RotateYaw(cameraRotationAngle);
+		if (mouseMotion.x > 0) RotateYaw(-deltaRotationAngle);
+		if (mouseMotion.x < 0) RotateYaw(deltaRotationAngle);
 	}
 
-	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * 2.f : cameraMoveSpeed;
+	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f : cameraMoveSpeed * deltaTime;
 
 	if (wKeyPressed) camera.pos += finalCameraSpeed * camera.front;
 
