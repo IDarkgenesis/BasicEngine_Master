@@ -66,7 +66,7 @@ update_status ModuleOpenGL::PreUpdate()
 }
 
 // Called every draw update
-update_status ModuleOpenGL::Update()
+update_status ModuleOpenGL::Update(float deltaTime)
 {
 
 	return UPDATE_CONTINUE;

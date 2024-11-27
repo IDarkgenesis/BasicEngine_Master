@@ -39,7 +39,7 @@ update_status ModuleEditor::PreUpdate()
     return UPDATE_CONTINUE;
 }
 
-update_status ModuleEditor::Update()
+update_status ModuleEditor::Update(float deltaTime)
 {
     Draw();
 

@@ -31,7 +31,7 @@ bool ModuleCamera::Init()
 	return true;
 }
 
-update_status ModuleCamera::Update()
+update_status ModuleCamera::Update(float deltaTime)
 {
 	ModuleInput* inputModule = App->GetInput();
 	

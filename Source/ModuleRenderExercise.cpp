@@ -84,7 +84,7 @@ bool ModuleRenderExercise::Init()
 	return true;
 }
 
-update_status ModuleRenderExercise::Update()
+update_status ModuleRenderExercise::Update(float deltaTime)
 {
 	
 	// Creating matrices for rendering

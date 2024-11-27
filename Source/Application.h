@@ -51,6 +51,8 @@ private:
 
     std::list<Module*> modules;
 
+    uint32_t previousElapsedTime = 0;
+
 };
 
 extern Application* App;

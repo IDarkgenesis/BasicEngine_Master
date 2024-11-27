@@ -10,9 +10,9 @@ public:
 	ModuleRenderExercise();
 	~ModuleRenderExercise();
 
-	bool Init();
-	update_status Update();
-	bool CleanUp();
+	bool Init() override;
+	update_status Update(float deltaTime) override;
+	bool CleanUp() override;
 
 private:
 	int program = -1;

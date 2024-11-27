@@ -10,10 +10,10 @@ public:
 	ModuleEditor();
 	~ModuleEditor();
 
-	bool Init();
-	update_status PreUpdate();
-	update_status Update();
-	bool CleanUp();
+	bool Init() override;
+	update_status PreUpdate() override;
+	update_status Update(float deltaTime) override;
+	bool CleanUp() override;
 
 	void Draw();
 	void ConfigMenu(bool& configMenu);

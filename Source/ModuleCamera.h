@@ -10,11 +10,11 @@ class ModuleCamera : public Module
 {
 public:
 	ModuleCamera();
-	~ModuleCamera();
+	~ModuleCamera() override;
 
-	bool Init();
-	update_status Update();
-	bool CleanUp();
+	bool Init() override;
+	update_status Update(float deltaTime) override;
+	bool CleanUp() override;
 
 	static float4x4 GetLookAtMatrix(const float3& cameraPosition, const float3& targetPosition, const float3& upVector);
 	float4x4 GetLookAtMatrix(const float3& targetPosition) const;

@@ -9,6 +9,7 @@
 #include "ModuleCamera.h"
 #include "ModuleEditor.h"
 #include "ModuleTexture.h"
+#include "SDL_timer.h"
 
 using namespace std;
 
@@ -46,13 +47,19 @@ bool Application::Init()
 
 update_status Application::Update()
 {
+	uint32_t currentTicks = SDL_GetTicks();
+	uint32_t deltaTicks = currentTicks - previousElapsedTime;
+	float deltaTime = deltaTicks / 1000.f;
+	
+	previousElapsedTime = currentTicks;
+
 	update_status ret = UPDATE_CONTINUE;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->Update();
+		ret = (*it)->Update(deltaTime);
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();

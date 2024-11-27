@@ -107,7 +107,7 @@ update_status ModuleInput::PreUpdate()
 }
 
 // Called every draw update
-update_status ModuleInput::Update()
+update_status ModuleInput::Update(float deltaTime)
 {
     return UPDATE_CONTINUE;
 }

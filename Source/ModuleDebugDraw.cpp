@@ -609,7 +609,7 @@ bool ModuleDebugDraw::CleanUp()
     return true;
 }
 
-update_status  ModuleDebugDraw::Update()
+update_status  ModuleDebugDraw::Update(float deltaTime)
 {
 
     float4x4 proj = App->GetCamera()->GetProjectionMatrix();

@@ -26,7 +26,7 @@ public:
 		return UPDATE_CONTINUE;
 	}
 
-	virtual update_status Update()
+	virtual update_status Update(float deltaTime)
 	{
 		return UPDATE_CONTINUE;
 	}
