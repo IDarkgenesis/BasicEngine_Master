@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleOpenGL.h"
+#include "ModuleCamera.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -23,7 +24,6 @@ bool ModuleEditor::Init()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
     ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
     ImGui_ImplOpenGL3_Init("#version 460");
@@ -42,16 +42,6 @@ update_status ModuleEditor::PreUpdate()
 update_status ModuleEditor::Update(float deltaTime)
 {
     Draw();
-
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-    }
 
     return UPDATE_CONTINUE;
 }
@@ -76,7 +66,10 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
     if (ImGui::CollapsingHeader("Window"))
     {
-        ImGui::SliderInt("Values", &value, 0, 2);
+        if (ImGui::SliderInt("FOV", &fov, 60, 110))
+        {
+            App->GetCamera()->SetFOV(fov);
+        }
         ImGui::Checkbox("Checkboxed", &checkBoxed);
     }
 

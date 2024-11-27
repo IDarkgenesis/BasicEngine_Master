@@ -21,6 +21,6 @@ private:
 	bool showcase = false;
 	bool configMenu = false;
 	bool checkBoxed = true;
-	int value = 1;
+	int fov = HFOV;
 };
 

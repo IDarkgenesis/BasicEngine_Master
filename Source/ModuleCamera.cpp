@@ -17,7 +17,7 @@ ModuleCamera::ModuleCamera()
 	camera.nearPlaneDistance = 0.1f;
 	camera.farPlaneDistance = 100.f;
 
-	camera.horizontalFov = 90.f * DEGTORAD;
+	camera.horizontalFov = (float)HFOV * DEGTORAD;
 	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)SCREEN_HEIGHT / (float)SCREEN_WIDTH));;
 }
 
@@ -166,16 +166,16 @@ float4x4 ModuleCamera::GetProjectionMatrix() const
 
 void ModuleCamera::SetFOV(float newHorizontalFov)
 {
-	int* width = nullptr;
-	int* height = nullptr;
+	int width = 0;
+	int height = 0;
 
-	SDL_GetWindowSize(App->GetWindow()->window, width, height);
+	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
 
-	if (width == nullptr && height == nullptr) return;
+	if (!width && !height) return;
 
-	camera.horizontalFov = newHorizontalFov;
+	camera.horizontalFov = newHorizontalFov * DEGTORAD;
 
-	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * (float)(*height / *width));
+	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)height / (float)width));
 }
 
 void ModuleCamera::SetAspectRatio(float newAspectRatio)

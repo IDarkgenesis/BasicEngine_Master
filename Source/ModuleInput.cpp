@@ -4,6 +4,7 @@
 #include "ModuleOpenGL.h"
 #include "SDL/include/SDL.h"
 #include <imgui_impl_sdl2.h>
+#include "ModuleWindow.h"
 
 
 #define MAX_KEYS 300
