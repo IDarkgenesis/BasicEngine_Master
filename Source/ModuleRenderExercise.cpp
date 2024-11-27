@@ -49,14 +49,32 @@ bool ModuleRenderExercise::Init()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	// Creating VBO for triangle
 	
-	float vtx_data[] = { 
-		-1.0f, -1.0f, 0.0f, 
-		1.0f, -1.0f, 0.0f, 
-		0.0f, 1.0f, 0.0f,
-		
+	//float vtx_data[] = { 
+	//	-1.0f, -1.0f, 0.0f, 
+	//	1.0f, -1.0f, 0.0f, 
+	//	0.0f, 1.0f, 0.0f,
+	//	
+	//	0.0f, 1.0f,
+	//	1.0f, 1.0f,
+	//	0.5f, 0.0f
+	//};
+
+	float vtx_data[] = {
+		-1.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+
+		1.0f, -1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f,
+
+		0.0f, 0.0f,
 		0.0f, 1.0f,
 		1.0f, 1.0f,
-		0.5f, 0.0f
+		
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f
 	};
 	
 	glGenBuffers(1, &vbo);
@@ -94,12 +112,12 @@ update_status ModuleRenderExercise::Update()
 
 	// Sending texture coordiantes
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 3));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 6));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, baboonTexture);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	return UPDATE_CONTINUE;
 }
