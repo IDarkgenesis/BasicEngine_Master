@@ -3,7 +3,6 @@
 #include "Module.h"
 #include "Globals.h"
 
-
 class ModuleRenderExercise : public Module
 {
 public:
@@ -16,8 +15,9 @@ public:
 	bool CleanUp();
 
 private:
-	int Program = -1;
+	int program = -1;
 
-	unsigned Vbo = -1;
+	unsigned vbo = -1;
+	unsigned baboonTexture = -1;
 };
 
