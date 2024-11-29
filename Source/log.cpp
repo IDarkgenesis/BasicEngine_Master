@@ -13,4 +13,14 @@ void glog(const char file[], int line, const char* format, ...)
 	va_end(ap);
 	sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
 	OutputDebugString(tmp_string2);
+
+	// Allocating memory to store logs
+	char* newString; 
+	newString = (char*)malloc(4096);
+
+	if (newString == NULL) return;
+
+	memcpy(newString, tmp_string, 4096*sizeof(char));
+
+	Logs->push_back(newString);
 }

@@ -2,8 +2,6 @@
 
 #include "Module.h"
 
-class ImGuiIO;
-
 class ModuleEditor : public Module
 {
 public:
@@ -17,10 +15,12 @@ public:
 
 	void Draw();
 	void ConfigMenu(bool& configMenu);
+	void Console(bool& console);
+
 private:
 	bool showcase = false;
 	bool configMenu = false;
-	bool checkBoxed = true;
+	bool console = false;
 	int fov = HFOV;
 };
 

@@ -17,11 +17,14 @@ enum main_states
 };
 
 Application* App = NULL;
+std::vector<char*>* Logs = NULL;
 
 int main(int argc, char ** argv)
 {
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
+	
+	Logs = new std::vector<char*>();
 
 	while (state != MAIN_EXIT)
 	{
@@ -29,23 +32,23 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			GLOG("Application Creation --------------");
+			GLOG("----- Application Creation -----");
 			App = new Application();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
-			GLOG("Application Init --------------");
+			GLOG("----- Application Init -----");
 			if (App->Init() == false)
 			{
-				GLOG("Application Init exits with error -----");
+				GLOG("----- Application Init exits with error -----");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_UPDATE;
-				GLOG("Application Update --------------");
+				GLOG("----- Application Update -----");
 			}
 
 			break;
@@ -56,7 +59,7 @@ int main(int argc, char ** argv)
 
 			if (update_return == UPDATE_ERROR)
 			{
-				GLOG("Application Update exits with error -----");
+				GLOG("----- Application Update exits with error -----");
 				state = MAIN_EXIT;
 			}
 
@@ -67,10 +70,10 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			GLOG("Application CleanUp --------------");
+			GLOG("----- Application CleanUp -----");
 			if (App->CleanUp() == false)
 			{
-				GLOG("Application CleanUp exits with error -----");
+				GLOG("----- Application CleanUp exits with error -----");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -85,5 +88,15 @@ int main(int argc, char ** argv)
 
 	delete App;
 	GLOG("Bye :)\n");
+
+	// Free memory from log*
+	for (auto log : *Logs)
+	{
+		free(log);
+	}
+
+	Logs->clear();
+	delete Logs;
+
 	return main_return;
 }

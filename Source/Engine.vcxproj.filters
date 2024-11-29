@@ -54,9 +54,6 @@
     <ClCompile Include="MathGeoLib\include\Geometry\LineSegment.cpp">
       <Filter>MathLibFiles</Filter>
     </ClCompile>
-    <ClCompile Include="log.cpp">
-      <Filter>MathLibFiles</Filter>
-    </ClCompile>
     <ClCompile Include="MathGeoLib\include\Math\MathFunc.cpp">
       <Filter>MathLibFiles</Filter>
     </ClCompile>
@@ -150,6 +147,7 @@
     <ClCompile Include="ModuleTexture.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="log.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />

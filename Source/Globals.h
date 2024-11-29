@@ -2,6 +2,9 @@
 #define NOMINMAX
 #include <windows.h>
 #include <stdio.h>
+#include <vector>
+
+extern std::vector<char*>* Logs;
 
 #define GLOG(format, ...) glog(__FILE__, __LINE__, format, __VA_ARGS__);
 

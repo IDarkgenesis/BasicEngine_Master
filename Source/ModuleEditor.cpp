@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "ModuleEditor.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
@@ -70,10 +71,21 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         {
             App->GetCamera()->SetFOV(fov);
         }
-        ImGui::Checkbox("Checkboxed", &checkBoxed);
     }
 
     if (ImGui::Button("Close Me")) configMenu = false;
+
+    ImGui::End();
+}
+
+void ModuleEditor::Console(bool& console)
+{
+    ImGui::Begin("Console", &console);
+
+    for (const char* log : *Logs)
+    {
+        ImGui::TextUnformatted(log);
+    }
 
     ImGui::End();
 }
@@ -93,12 +105,16 @@ void ModuleEditor::Draw()
         if (ImGui::MenuItem("Configuration"))
             configMenu = !configMenu;
 
+        if (ImGui::MenuItem("Console"))
+            console = !console;
+
         ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
 
     if (showcase) ImGui::ShowDemoWindow(&showcase);
     if (configMenu) ConfigMenu(configMenu);
+    if (console) Console(console);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
