@@ -5,6 +5,7 @@
 #include "SDL/include/SDL.h"
 #include <imgui_impl_sdl2.h>
 #include "ModuleWindow.h"
+#include "ModuleCamera.h"
 
 
 #define MAX_KEYS 300

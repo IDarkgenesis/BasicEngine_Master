@@ -6,6 +6,16 @@
 
 ModuleCamera::ModuleCamera()
 {
+	
+}
+
+ModuleCamera::~ModuleCamera()
+{
+
+}
+
+bool ModuleCamera::Init()
+{
 	target = float3::zero;
 
 	camera.type = FrustumType::PerspectiveFrustum;
@@ -18,16 +28,12 @@ ModuleCamera::ModuleCamera()
 	camera.farPlaneDistance = 100.f;
 
 	camera.horizontalFov = (float)HFOV * DEGTORAD;
-	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)SCREEN_HEIGHT / (float)SCREEN_WIDTH));;
-}
 
-ModuleCamera::~ModuleCamera()
-{
+	SDL_DisplayMode displayMode;
+	SDL_GetDesktopDisplayMode(0, &displayMode);
 
-}
+	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)displayMode.h / (float)displayMode.w));
 
-bool ModuleCamera::Init()
-{
 	return true;
 }
 

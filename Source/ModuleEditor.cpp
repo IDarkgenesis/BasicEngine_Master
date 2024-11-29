@@ -48,11 +48,12 @@ update_status ModuleEditor::Update(float deltaTime)
 {
     framerate[currentPlotData] = (1.f/deltaTime);
     frametime[currentPlotData] = deltaTime * 1000.f;
+
+    Draw();
+
     currentPlotData++;
 
     if (currentPlotData >= maximumPlotData) currentPlotData = 0;
-
-    Draw();
 
     return UPDATE_CONTINUE;
 }

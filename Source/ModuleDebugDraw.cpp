@@ -3,6 +3,8 @@
 #include "MathGeoLib.h"
 #include "Application.h"
 #include "ModuleCamera.h"
+#include "ModuleWindow.h"
+#include "SDL_video.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "DebugDraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
@@ -618,7 +620,12 @@ update_status  ModuleDebugDraw::Update(float deltaTime)
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Blue);
 
-    Draw(view, proj, SCREEN_WIDTH, SCREEN_HEIGHT);
+    int width = 0;
+    int height = 0;
+
+    SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+
+    Draw(view, proj, width, height);
 
 	return UPDATE_CONTINUE;
 }
