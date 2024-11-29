@@ -10,11 +10,12 @@
 
 ModuleEditor::ModuleEditor()
 {
-
+    
 }
 
 ModuleEditor::~ModuleEditor()
 {
+
 }
 
 bool ModuleEditor::Init()
@@ -29,6 +30,9 @@ bool ModuleEditor::Init()
     ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
     ImGui_ImplOpenGL3_Init("#version 460");
 
+    framerate = std::vector<float>(maximumPlotData, 0.f);
+    frametime = std::vector<float>(maximumPlotData, 0.f);
+
 	return true;
 }
 
@@ -42,6 +46,12 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update(float deltaTime)
 {
+    framerate[currentPlotData] = (1.f/deltaTime);
+    frametime[currentPlotData] = deltaTime * 1000.f;
+    currentPlotData++;
+
+    if (currentPlotData >= maximumPlotData) currentPlotData = 0;
+
     Draw();
 
     return UPDATE_CONTINUE;
@@ -53,6 +63,9 @@ bool ModuleEditor::CleanUp()
     ImGui_ImplSDL2_Shutdown(); 
     ImGui::DestroyContext();
 
+    framerate.clear();
+    frametime.clear();
+
     return true;
 }
 
@@ -62,7 +75,12 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
     ImGui::Text("Options");
     if (ImGui::CollapsingHeader("Application"))
     {
-        
+        char title[25];
+        sprintf_s(title, 25, "Framerate %.1f", framerate[currentPlotData]);
+        ImGui::PlotHistogram("##framerate", &framerate[0], framerate.size(), currentPlotData, title, 0.f, 240.f, ImVec2(310, 100));
+
+        sprintf_s(title, 25, "Milliseconds %0.1f", frametime[currentPlotData]);
+        ImGui::PlotHistogram("##milliseconds", &frametime[0], frametime.size(), currentPlotData, title, 0.f, 40.f, ImVec2(310, 100));
     }
 
     if (ImGui::CollapsingHeader("Window"))

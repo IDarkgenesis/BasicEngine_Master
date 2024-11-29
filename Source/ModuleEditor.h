@@ -22,5 +22,10 @@ private:
 	bool configMenu = false;
 	bool console = false;
 	int fov = HFOV;
+
+	int maximumPlotData = 50;
+	int currentPlotData = 0;
+	std::vector<float> framerate;
+	std::vector<float> frametime;
 };
 

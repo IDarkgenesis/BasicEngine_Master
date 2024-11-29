@@ -23,9 +23,9 @@ public:
 	ModuleInput();
 	~ModuleInput();
 
-	bool Init();
+	bool Init() override;
 
-	update_status PreUpdate();
+	update_status PreUpdate() override;
 	update_status Update(float deltaTime) override;
 
 	bool CleanUp();
