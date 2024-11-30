@@ -6,6 +6,7 @@
 #include <imgui_impl_sdl2.h>
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
+#include "ModuleEditor.h"
 
 
 #define MAX_KEYS 300
@@ -85,7 +86,10 @@ update_status ModuleInput::PreUpdate()
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+			{
 				App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				App->GetEditor()->SetNewScreenSize(sdlEvent.window.data1, sdlEvent.window.data2);
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			mouse_buttons[sdlEvent.button.button - 1] = KEY_DOWN;

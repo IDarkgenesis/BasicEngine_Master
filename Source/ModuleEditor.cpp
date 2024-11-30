@@ -58,6 +58,11 @@ update_status ModuleEditor::Update(float deltaTime)
     return UPDATE_CONTINUE;
 }
 
+update_status ModuleEditor::PostUpdate()
+{
+    return UPDATE_CONTINUE;
+}
+
 bool ModuleEditor::CleanUp()
 {
     ImGui_ImplOpenGL3_Shutdown(); 
@@ -86,11 +91,32 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
     if (ImGui::CollapsingHeader("Window"))
     {
+        // FOV Slider
         if (ImGui::SliderInt("FOV", &fov, 60, 110))
         {
             App->GetCamera()->SetFOV(fov);
         }
+
+        ImGui::Separator();
+
+        // Resize Sliders
+        int currentWidth = 0;
+        int currentHeight = 0;
+        SDL_GetWindowSize(App->GetWindow()->window, &currentWidth, &currentHeight);
+
+        SDL_DisplayMode displayMode;
+        SDL_GetDesktopDisplayMode(0, &displayMode);
+
+        ImGui::SliderInt("Screen Width", &width, currentWidth / 4, displayMode.w);
+        ImGui::SliderInt("Screen Height", &height, currentHeight / 4, displayMode.h);
+        
+        if (ImGui::Button("Resize"))
+        {
+            App->GetWindow()->ResizeWindow(width, height);
+        }
     }
+
+    ImGui::Separator();
 
     if (ImGui::Button("Close Me")) configMenu = false;
 
@@ -109,6 +135,12 @@ void ModuleEditor::Console(bool& console)
     ImGui::End();
 }
 
+void ModuleEditor::SetNewScreenSize(int newWidth, int newHeight)
+{
+    width = newWidth;
+    height = newHeight;
+}
+
 void ModuleEditor::Draw()
 {
     ImGui_ImplOpenGL3_NewFrame();
@@ -119,21 +151,21 @@ void ModuleEditor::Draw()
     if (ImGui::BeginMenu("Help!"))
     {
         if (ImGui::MenuItem("Gui Demo"))
-            showcase = !showcase;
+            showcaseMenu = !showcaseMenu;
 
         if (ImGui::MenuItem("Configuration"))
             configMenu = !configMenu;
 
         if (ImGui::MenuItem("Console"))
-            console = !console;
+            consoleMenu = !consoleMenu;
 
         ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
 
-    if (showcase) ImGui::ShowDemoWindow(&showcase);
+    if (showcaseMenu) ImGui::ShowDemoWindow(&showcaseMenu);
     if (configMenu) ConfigMenu(configMenu);
-    if (console) Console(console);
+    if (consoleMenu) Console(consoleMenu);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

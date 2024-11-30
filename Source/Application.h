@@ -35,6 +35,8 @@ public:
     ModuleRenderExercise*  GetRenderExercise() { return renderExercise; }
     ModuleCamera* GetCamera() { return camera; }
 
+    ModuleEditor* GetEditor() { return editor; }
+
 private:
 
     ModuleOpenGL* render = nullptr;

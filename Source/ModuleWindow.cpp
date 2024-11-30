@@ -71,3 +71,8 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
+void ModuleWindow::ResizeWindow(int newWidth, int newHeight)
+{
+	SDL_SetWindowSize(window, newWidth, newHeight);
+}
+
