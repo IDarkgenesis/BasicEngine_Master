@@ -22,6 +22,9 @@ public:
 	bool CleanUp() override;
 
 	void ResizeWindow(int newWidth, int newHeight);
+	void SetWindowResizable(SDL_bool resizable);
+	void SetWindowFullscreen(Uint32 flag);
+	void SetWindowBorderless(SDL_bool borderless);
 
 public:
 	//The window we'll be rendering to

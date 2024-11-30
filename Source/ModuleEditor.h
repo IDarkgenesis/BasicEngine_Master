@@ -31,6 +31,8 @@ private:
 	int height = SCREEN_HEIGHT;
 	bool resizableWindow = true;
 	bool fullscreen = false;
+	bool fullDesktop = false;
+	bool borderless = false;
 
 	int maximumPlotData = 50;
 	int currentPlotData = 0;

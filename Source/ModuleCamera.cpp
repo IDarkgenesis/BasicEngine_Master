@@ -29,10 +29,11 @@ bool ModuleCamera::Init()
 
 	camera.horizontalFov = (float)HFOV * DEGTORAD;
 
-	SDL_DisplayMode displayMode;
-	SDL_GetDesktopDisplayMode(0, &displayMode);
+	int width = 0;
+	int height = 0;
+	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
 
-	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)displayMode.h / (float)displayMode.w));
+	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)height / (float)width));
 
 	return true;
 }

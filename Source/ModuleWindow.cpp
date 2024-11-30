@@ -76,3 +76,19 @@ void ModuleWindow::ResizeWindow(int newWidth, int newHeight)
 	SDL_SetWindowSize(window, newWidth, newHeight);
 }
 
+void ModuleWindow::SetWindowResizable(SDL_bool resizable)
+{
+	SDL_SetWindowResizable(window, resizable);
+}
+
+void ModuleWindow::SetWindowFullscreen(Uint32 flag)
+{
+	SDL_SetWindowFullscreen(window, flag);
+}
+
+void ModuleWindow::SetWindowBorderless(SDL_bool borderless)
+{
+	SDL_SetWindowBordered(window, borderless);
+}
+
+

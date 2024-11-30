@@ -86,13 +86,12 @@ bool ModuleOpenGL::CleanUp()
 
 	SDL_GL_DeleteContext(App->GetWindow()->window);
 
-	//Destroy window
-
 	return true;
 }
 
 void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
+	// Recalculating Vertical FOV -> important height / width
 	float aspectRatio = (float)height / width;
 	App->GetCamera()->SetAspectRatio(aspectRatio);
 }

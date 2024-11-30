@@ -33,6 +33,8 @@ bool ModuleEditor::Init()
     framerate = std::vector<float>(maximumPlotData, 0.f);
     frametime = std::vector<float>(maximumPlotData, 0.f);
 
+    SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+
 	return true;
 }
 
@@ -99,20 +101,50 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
         ImGui::Separator();
 
-        // Resize Sliders
-        int currentWidth = 0;
-        int currentHeight = 0;
-        SDL_GetWindowSize(App->GetWindow()->window, &currentWidth, &currentHeight);
-
+        // Size sliders
         SDL_DisplayMode displayMode;
         SDL_GetDesktopDisplayMode(0, &displayMode);
 
-        ImGui::SliderInt("Screen Width", &width, currentWidth / 4, displayMode.w);
-        ImGui::SliderInt("Screen Height", &height, currentHeight / 4, displayMode.h);
+        ImGui::SliderInt("Screen Width", &width, 600, displayMode.w);
+        ImGui::SliderInt("Screen Height", &height, 400, displayMode.h);
         
-        if (ImGui::Button("Resize"))
+        if (!fullscreen && !fullDesktop && resizableWindow && ImGui::Button("Resize"))
         {
             App->GetWindow()->ResizeWindow(width, height);
+        }
+
+        ImGui::Separator();
+
+        // Window options
+        if (ImGui::Checkbox("Fullscreen", &fullscreen))
+        {
+            Uint32 flag = fullscreen ? SDL_WINDOW_FULLSCREEN : 0;
+            fullDesktop = false;
+            App->GetWindow()->SetWindowFullscreen(flag);
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Checkbox("Allow Resize", &resizableWindow))
+        {
+            SDL_bool resizeable = resizableWindow ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE;
+            App->GetWindow()->SetWindowResizable(resizeable);
+        }
+
+        if (ImGui::Checkbox("Borderless", &borderless))
+        {
+            SDL_bool bordered = borderless ? SDL_bool::SDL_FALSE : SDL_bool::SDL_TRUE;
+            fullscreen = false;
+            fullDesktop = false;
+            App->GetWindow()->SetWindowFullscreen(0);
+            App->GetWindow()->SetWindowBorderless(bordered);
+        }
+        
+        ImGui::SameLine();
+        if (ImGui::Checkbox("Full desktop", &fullDesktop))
+        {
+            Uint32 flag = fullDesktop ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0;
+            fullscreen = false;
+            App->GetWindow()->SetWindowFullscreen(flag);
         }
     }
 
