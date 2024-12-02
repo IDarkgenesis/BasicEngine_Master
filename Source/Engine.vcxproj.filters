@@ -54,6 +54,9 @@
     <ClCompile Include="MathGeoLib\include\Geometry\LineSegment.cpp">
       <Filter>MathLibFiles</Filter>
     </ClCompile>
+    <ClCompile Include="log.cpp">
+      <Filter>MathLibFiles</Filter>
+    </ClCompile>
     <ClCompile Include="MathGeoLib\include\Math\MathFunc.cpp">
       <Filter>MathLibFiles</Filter>
     </ClCompile>
@@ -147,7 +150,12 @@
     <ClCompile Include="ModuleTexture.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="log.cpp" />
+    <ClCompile Include="EngineModel.cpp">
+      <Filter>EngineClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineMesh.cpp">
+      <Filter>EngineClasses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -218,6 +226,18 @@
     <ClInclude Include="ModuleTexture.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Tinygltf\json.hpp">
+      <Filter>Tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="Tinygltf\tiny_gltf.h">
+      <Filter>Tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineModel.h">
+      <Filter>EngineClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineMesh.h">
+      <Filter>EngineClasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathLibFiles">
@@ -231,6 +251,12 @@
     </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{f8a36d25-0640-4bf2-b5f7-63c16e7ee579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tinygltf">
+      <UniqueIdentifier>{6b752077-a09b-4707-a3c6-86e4edded7a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineClasses">
+      <UniqueIdentifier>{b4827fd7-1ed8-47a4-81ae-a361bc6b36fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

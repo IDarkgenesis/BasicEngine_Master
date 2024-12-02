@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Module.h"
-#include "Globals.h"
+#include <memory>
+
+class EngineModel;
 
 class ModuleRenderExercise : public Module
 {
@@ -19,5 +21,8 @@ private:
 
 	unsigned vbo = -1;
 	unsigned baboonTexture = -1;
+
+	//EngineModel* firstModel;
+	std::unique_ptr<EngineModel> firstModel;
 };
 

@@ -7,10 +7,11 @@
 #include "ModuleCamera.h"
 #include "ModuleTexture.h"
 #include "DirectXTex/DirectXTex.h"
+#include "EngineModel.h"
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
-
+	firstModel = std::make_unique<EngineModel>();
 }
 
 ModuleRenderExercise::~ModuleRenderExercise()
@@ -80,6 +81,9 @@ bool ModuleRenderExercise::Init()
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
+
+	// LOAD MODEL
+	firstModel->Load("TriangleWithoutIndices.gltf");
 
 	return true;
 }
