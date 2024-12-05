@@ -4,7 +4,7 @@
 #include "Globals.h"
 #include "MathGeoLib/include/Geometry/Frustum.h"
 
-const float PI = 3.14159265359;
+const float PI = 3.14159265359f;
 
 class ModuleCamera : public Module
 {

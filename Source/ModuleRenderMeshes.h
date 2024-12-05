@@ -4,21 +4,19 @@
 
 class EngineModel;
 
-class ModuleRenderExercise : public Module
+class ModuleRenderMeshes : public Module
 {
 public:
-
-	ModuleRenderExercise();
-	~ModuleRenderExercise();
+	ModuleRenderMeshes();
+	~ModuleRenderMeshes();
 
 	bool Init() override;
 	update_status Update(float deltaTime) override;
 	bool CleanUp() override;
-
 private:
 	int program = -1;
 
-	unsigned vbo = -1;
-	unsigned baboonTexture = -1;
+	EngineModel* triangleNoIndices;
+	EngineModel* triangleIndices;
 };
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <memory>
+#include "MathGeoLib/include/Math/float4x4.h"
 
-#include "EngineMesh.h"
+class EngineMesh;
 
 class EngineModel
 {
@@ -13,8 +13,10 @@ public:
 
 	void Load(const char* modelPath);
 
+	void Render(int program);
+
 private:
 
-	std::vector<EngineMesh> meshes;
+	std::vector<EngineMesh*> meshes;
 };
 

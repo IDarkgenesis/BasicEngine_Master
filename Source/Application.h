@@ -9,11 +9,14 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModuleProgram;
-class ModuleRenderExercise;
 class ModuleDebugDraw;
 class ModuleCamera;
 class ModuleEditor;
 class ModuleTexture;
+class ModuleTexture;
+
+class ModuleRenderExercise;
+class ModuleRenderMeshes;
 
 class Application
 {
@@ -45,11 +48,13 @@ private:
     ModuleProgram* program = nullptr;
     ModuleTexture* texture = nullptr;
 
-    ModuleRenderExercise* renderExercise = nullptr;
     ModuleDebugDraw* debugDraw = nullptr;
 
     ModuleCamera* camera = nullptr;
     ModuleEditor* editor = nullptr;
+
+    ModuleRenderExercise* renderExercise = nullptr;
+    ModuleRenderMeshes* renderMeshesExercise = nullptr;
 
     std::list<Module*> modules;
 

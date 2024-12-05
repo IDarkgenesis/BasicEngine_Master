@@ -7,11 +7,9 @@
 #include "ModuleCamera.h"
 #include "ModuleTexture.h"
 #include "DirectXTex/DirectXTex.h"
-#include "EngineModel.h"
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
-	firstModel = std::make_unique<EngineModel>();
 }
 
 ModuleRenderExercise::~ModuleRenderExercise()
@@ -21,8 +19,8 @@ ModuleRenderExercise::~ModuleRenderExercise()
 bool ModuleRenderExercise::Init()
 {
 	// Creating shaders and program
-	char* vertexShader = App->GetProgram()->LoadShaderSource("VertexShader.glsl");
-	char* fragmentShader = App->GetProgram()->LoadShaderSource("FragmentShader.glsl");
+	char* vertexShader = App->GetProgram()->LoadShaderSource("./RenderExercise/VertexShader.glsl");
+	char* fragmentShader = App->GetProgram()->LoadShaderSource("./RenderExercise/FragmentShader.glsl");
 
 	unsigned vertexId = App->GetProgram()->CompileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned fragmentId = App->GetProgram()->CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
@@ -33,7 +31,7 @@ bool ModuleRenderExercise::Init()
 	free(fragmentShader);
 
 	// Texture loading
-	auto baboonPath = L"baboon.ppm";
+	auto baboonPath = L"./RenderExercise/baboon.ppm";
 	DirectX::TexMetadata metadata;
 	DirectX::ScratchImage image;
 	OpenGLMetadata openGlMeta;
@@ -81,9 +79,6 @@ bool ModuleRenderExercise::Init()
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
-
-	// LOAD MODEL
-	firstModel->Load("TriangleWithoutIndices.gltf");
 
 	return true;
 }
