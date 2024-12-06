@@ -23,27 +23,42 @@ EngineMesh::~EngineMesh()
 
 void EngineMesh::LoadVBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive)
 {
+	// Getting required size for VBO buffer
 	const auto& positionIterator = inPrimitive.attributes.find("POSITION");
+	const auto& textureIterator = inPrimitive.attributes.find("TEXCOORD_0");
 	
-	if (positionIterator != inPrimitive.attributes.end())
+	if (positionIterator != inPrimitive.attributes.end()) {
+		const tinygltf::Accessor& positionAccessor = inModel.accessors[positionIterator->second];
+		vertexCount = positionAccessor.count;
+	}
+
+	if (textureIterator != inPrimitive.attributes.end()) {
+		const tinygltf::Accessor& textureAccessor = inModel.accessors[textureIterator->second];
+		textureCoordCount = textureAccessor.count;
+	}
+
+	if ((vertexCount + textureCoordCount) > 0)
+	{
+		unsigned int bufferSize = (sizeof(float) * 3 * vertexCount) + (sizeof(float) * 2 * textureCoordCount);
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+	}
+
+	// Loading position vertices to VBO
+	if (vertexCount > 0)
 	{
 		const tinygltf::Accessor& positionAccessor = inModel.accessors[positionIterator->second];
 		
 		SDL_assert(positionAccessor.type == TINYGLTF_TYPE_VEC3);
 		SDL_assert(positionAccessor.componentType == GL_FLOAT);
 
-		vertexCount = positionAccessor.count;
-
 		const tinygltf::BufferView& positionBufferView = inModel.bufferViews[positionAccessor.bufferView];
 		const tinygltf::Buffer& positionBuffer = inModel.buffers[positionBufferView.buffer];
 
 		const unsigned char* bufferStart = &(positionBuffer.data[positionAccessor.byteOffset + positionBufferView.byteOffset]);
-
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * positionAccessor.count, nullptr, GL_STATIC_DRAW);
 		
-		float3* ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+		float3* ptr = reinterpret_cast<float3*>(glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(float) * 3 * vertexCount, GL_MAP_WRITE_BIT));
 
 		for (size_t i = 0; i < positionAccessor.count; ++i)
 		{
@@ -55,6 +70,33 @@ void EngineMesh::LoadVBO(const tinygltf::Model& inModel, const tinygltf::Mesh& i
 
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
+
+	// Loading texture coordinates to VBO, Separated array;
+	if (textureCoordCount > 0)
+	{
+		const tinygltf::Accessor& textureAccessor = inModel.accessors[textureIterator->second];
+
+		SDL_assert(textureAccessor.type == TINYGLTF_TYPE_VEC2);
+		SDL_assert(textureAccessor.componentType == GL_FLOAT);
+
+		const tinygltf::BufferView& textureBufferView = inModel.bufferViews[textureAccessor.bufferView];
+		const tinygltf::Buffer& textureBuffer = inModel.buffers[textureBufferView.buffer];
+
+		const unsigned char* bufferStart = &(textureBuffer.data[textureAccessor.byteOffset + textureBufferView.byteOffset]);
+
+		float2* ptr = reinterpret_cast<float2*>(glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float) * 3 * vertexCount, sizeof(float) * 2 * textureCoordCount, GL_MAP_WRITE_BIT));
+
+		for (size_t i = 0; i < textureAccessor.count; ++i)
+		{
+			ptr[i] = *reinterpret_cast<const float2*>(bufferStart);
+
+			// bufferView.byteStride == 0 -> Only positions inside buffer, which then the stride becomes space between vertices -> sizeof(float) * 3.
+			bufferStart += textureBufferView.byteStride == 0 ? sizeof(float) * 2 : textureBufferView.byteStride;
+		}
+
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+	}
+	
 }
 
 void EngineMesh::LoadEBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive)
@@ -89,17 +131,37 @@ void EngineMesh::LoadEBO(const tinygltf::Model& inModel, const tinygltf::Mesh& i
 	}
 }
 
-void EngineMesh::Render(int program)
+void EngineMesh::CreateVAO()
+{
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	
+	// IN CASE WE ARE USING INDICES FOR RENDERING
+	if(indexCount > 0) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	// SETTING TEXTURE COORDINATES IF LOADED
+	if (textureCoordCount > 0)
+	{
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * vertexCount));
+	}
+
+	glBindVertexArray(0);
+}
+
+void EngineMesh::Render(int program, int texturePosition)
 {
 	float4x4 proj, view, model;
 	
 	proj = App->GetCamera()->GetProjectionMatrix();
 	view = App->GetCamera()->GetViewMatrix();
 	
-	model = float4x4::FromTRS(
-				float3(2.0f, 0.0f, 0.0f),
-				float4x4::RotateZ(pi / 4.0f),
-				float3(2.0f, 1.0f, 1.0f));
+	model = float4x4::identity;
 	
 	glUseProgram(program);
 
@@ -107,20 +169,20 @@ void EngineMesh::Render(int program)
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
 
-	if (indexCount > 0)
+	if (texturePosition > 0)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texturePosition);
+	}
+
+	if (indexCount > 0 && vao)
+	{
+		glBindVertexArray(vao);
 
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 	}
-	else {
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	else if(vao) {
+		glBindVertexArray(vao);
 
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	}

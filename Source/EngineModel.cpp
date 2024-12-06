@@ -3,6 +3,9 @@
 #include "Globals.h"
 #include "EngineMesh.h"
 #include "MathGeoLib.h"
+#include "Application.h"
+#include "ModuleTexture.h"
+#include "glew-2.1.0/include/GL/glew.h"
 
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #define TINYGLTF_NO_STB_IMAGE
@@ -44,8 +47,55 @@ void EngineModel::Load(const char* modelPath)
 			EngineMesh* newMesh = new EngineMesh();
 			newMesh->LoadVBO(model, sourceMesh, primitive);
 			if (primitive.indices >= 0) newMesh->LoadEBO(model, sourceMesh, primitive);
+			newMesh->CreateVAO();
 			meshes.push_back(newMesh);
 		}
+	}
+
+	LoadMaterials(model, modelPath);
+}
+
+void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* modelPath)
+{
+	for (const auto& srcMaterial : sourceModel.materials)
+	{
+		unsigned int textureId = 0;
+		if (srcMaterial.pbrMetallicRoughness.baseColorTexture.index >= 0)
+		{
+			const tinygltf::Texture& texture = sourceModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
+			const tinygltf::Image& image = sourceModel.images[texture.source];
+
+			DirectX::TexMetadata metadata;
+			DirectX::ScratchImage scratchImage;
+			OpenGLMetadata openGlMeta;
+
+			std::string stringPath = std::string(modelPath);
+			int charsToIgnore = 0;
+			auto pathIterator = stringPath.end();
+
+			while (pathIterator-- != stringPath.begin() && *pathIterator != '/')
+			{
+				++charsToIgnore;
+			}
+
+			std::string texturePathString = stringPath.substr(0, stringPath.length() - charsToIgnore).append(image.uri);
+
+			std::wstring wideUri = std::wstring(texturePathString.begin(), texturePathString.end());
+			const wchar_t* texturePath = wideUri.c_str();
+
+			if (App->GetTexture()->LoadTexture(texturePath, metadata, scratchImage))
+			{
+				ModuleTexture::ConvertMetadata(metadata, openGlMeta);
+				glGenTextures(1, &textureId);
+				glBindTexture(GL_TEXTURE_2D, textureId);
+				
+				// Sending texture to OpgenGL
+				glTexImage2D(GL_TEXTURE_2D, 0, openGlMeta.internalFormat, metadata.width, metadata.height, 0, openGlMeta.format, openGlMeta.type, scratchImage.GetPixels());
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			}
+		}
+		textures.push_back(textureId);
 	}
 }
 
@@ -53,6 +103,7 @@ void EngineModel::Render(int program)
 {
 	for (EngineMesh* currentMesh : meshes)
 	{
-		currentMesh->Render(program);
+		int texturePostiion = textures.size() > 0 ? textures[0] : 0;
+		currentMesh->Render(program, texturePostiion);
 	}
 }

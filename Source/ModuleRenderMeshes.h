@@ -14,9 +14,13 @@ public:
 	update_status Update(float deltaTime) override;
 	bool CleanUp() override;
 private:
-	int program = -1;
+	int programNoTextures = 0;
+	int programTextures = 0;
 
 	EngineModel* triangleNoIndices;
 	EngineModel* triangleIndices;
+	EngineModel* box;
+	EngineModel* textureBox;
+	EngineModel* house;
 };
 

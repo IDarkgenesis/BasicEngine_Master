@@ -17,15 +17,18 @@ public:
 
 	void LoadVBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive);
 	void LoadEBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive);
+	void CreateVAO();
 
-	void Render(int program);
+	void Render(int program, int texturePosition);
 
 private:
 	unsigned int vbo = 0;
 	unsigned int ebo = 0;
+	unsigned int vao = 0;
 	unsigned int material = 0;
 
-	int vertexCount = 0; 
+	int vertexCount = 0;
+	int textureCoordCount = 0;
 	int indexCount = 0;
 };
 
