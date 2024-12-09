@@ -15,7 +15,10 @@ public:
 	ModuleTexture();
 	~ModuleTexture();
 
-	bool LoadTexture(const wchar_t* texturePath, DirectX::TexMetadata& outMetadata, DirectX::ScratchImage& outImage);
+	unsigned int LoadTexture(const wchar_t* texturePath);
 	static void ConvertMetadata(const DirectX::TexMetadata& metadata, OpenGLMetadata& outMetadata);
+
+private:
+	bool LoadTextureFile(const wchar_t* texturePath, DirectX::TexMetadata& outMetadata, DirectX::ScratchImage& outImage);
 };
 

@@ -65,10 +65,7 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			const tinygltf::Texture& texture = sourceModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
 			const tinygltf::Image& image = sourceModel.images[texture.source];
 
-			DirectX::TexMetadata metadata;
-			DirectX::ScratchImage scratchImage;
-			OpenGLMetadata openGlMeta;
-
+			// Removing file name from path to get the texture
 			std::string stringPath = std::string(modelPath);
 			int charsToIgnore = 0;
 			auto pathIterator = stringPath.end();
@@ -83,17 +80,7 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			std::wstring wideUri = std::wstring(texturePathString.begin(), texturePathString.end());
 			const wchar_t* texturePath = wideUri.c_str();
 
-			if (App->GetTexture()->LoadTexture(texturePath, metadata, scratchImage))
-			{
-				ModuleTexture::ConvertMetadata(metadata, openGlMeta);
-				glGenTextures(1, &textureId);
-				glBindTexture(GL_TEXTURE_2D, textureId);
-				
-				// Sending texture to OpgenGL
-				glTexImage2D(GL_TEXTURE_2D, 0, openGlMeta.internalFormat, metadata.width, metadata.height, 0, openGlMeta.format, openGlMeta.type, scratchImage.GetPixels());
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			}
+			textureId = App->GetTexture()->LoadTexture(texturePath);
 		}
 		textures.push_back(textureId);
 	}

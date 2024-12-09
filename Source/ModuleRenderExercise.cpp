@@ -36,16 +36,7 @@ bool ModuleRenderExercise::Init()
 	DirectX::ScratchImage image;
 	OpenGLMetadata openGlMeta;
 
-	App->GetTexture()->LoadTexture(baboonPath, metadata, image);
-	ModuleTexture::ConvertMetadata(metadata, openGlMeta);
-
-	glGenTextures(1, &baboonTexture);
-	glBindTexture(GL_TEXTURE_2D, baboonTexture);
-	
-	// Sending texture to OpgenGL
-	glTexImage2D(GL_TEXTURE_2D, 0, openGlMeta.internalFormat, metadata.width, metadata.height, 0, openGlMeta.format, openGlMeta.type, image.GetPixels());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	baboonTexture = App->GetTexture()->LoadTexture(baboonPath);
 	// Creating VBO for triangle
 	
 	//float vtx_data[] = { 

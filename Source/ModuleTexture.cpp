@@ -10,22 +10,29 @@ ModuleTexture::~ModuleTexture()
 {
 }
 
-bool ModuleTexture::LoadTexture(const wchar_t* texturePath, DirectX::TexMetadata& outMetadata, DirectX::ScratchImage& outImage)
+unsigned int ModuleTexture::LoadTexture(const wchar_t* texturePath)
 {
+	unsigned int textureId = 0;
 
-	HRESULT hr = LoadFromDDSFile(texturePath, DirectX::DDS_FLAGS_NONE, &outMetadata, outImage);
-	
-	if (SUCCEEDED(hr)) return true;
+	DirectX::TexMetadata metadata;
+	DirectX::ScratchImage scratchImage;
+	OpenGLMetadata openGlMeta;
 
-	hr = LoadFromTGAFile(texturePath, DirectX::TGA_FLAGS_NONE, &outMetadata, outImage);
+	bool succeded = LoadTextureFile(texturePath, metadata, scratchImage);
+	if (succeded)
+	{
+		ConvertMetadata(metadata, openGlMeta);
 
-	if (SUCCEEDED(hr)) return true;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
 
-	hr = DirectX::LoadFromWICFile(texturePath, DirectX::WIC_FLAGS_NONE, &outMetadata, outImage);
+		// Sending texture to OpgenGL
+		glTexImage2D(GL_TEXTURE_2D, 0, openGlMeta.internalFormat, metadata.width, metadata.height, 0, openGlMeta.format, openGlMeta.type, scratchImage.GetPixels());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
 
-	if (SUCCEEDED(hr)) return true;
-
-	return false;
+	return textureId;
 }
 
 void ModuleTexture::ConvertMetadata(const DirectX::TexMetadata& metadata, OpenGLMetadata& outMetadata)
@@ -52,4 +59,21 @@ void ModuleTexture::ConvertMetadata(const DirectX::TexMetadata& metadata, OpenGL
 	default:
 		assert(false && "Unsupported format");
 	}
+}
+
+bool ModuleTexture::LoadTextureFile(const wchar_t* texturePath, DirectX::TexMetadata& outMetadata, DirectX::ScratchImage& outImage)
+{
+	HRESULT hr = LoadFromDDSFile(texturePath, DirectX::DDS_FLAGS_NONE, &outMetadata, outImage);
+
+	if (SUCCEEDED(hr)) return true;
+
+	hr = LoadFromTGAFile(texturePath, DirectX::TGA_FLAGS_NONE, &outMetadata, outImage);
+
+	if (SUCCEEDED(hr)) return true;
+
+	hr = DirectX::LoadFromWICFile(texturePath, DirectX::WIC_FLAGS_NONE, &outMetadata, outImage);
+
+	if (SUCCEEDED(hr)) return true;
+
+	return false;
 }
