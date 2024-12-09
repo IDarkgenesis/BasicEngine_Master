@@ -614,8 +614,8 @@ bool ModuleDebugDraw::CleanUp()
 update_status  ModuleDebugDraw::Update(float deltaTime)
 {
 
-    float4x4 proj = App->GetCamera()->GetProjectionMatrix();
-    float4x4 view = App->GetCamera()->GetViewMatrix();
+    float4x4 proj = App->GetCameraModule()->GetProjectionMatrix();
+    float4x4 view = App->GetCameraModule()->GetViewMatrix();
 
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Blue);
@@ -623,7 +623,7 @@ update_status  ModuleDebugDraw::Update(float deltaTime)
     int width = 0;
     int height = 0;
 
-    SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+    SDL_GetWindowSize(App->GetWindowModule()->window, &width, &height);
 
     Draw(view, proj, width, height);
 

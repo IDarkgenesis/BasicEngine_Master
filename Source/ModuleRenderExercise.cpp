@@ -19,13 +19,13 @@ ModuleRenderExercise::~ModuleRenderExercise()
 bool ModuleRenderExercise::Init()
 {
 	// Creating shaders and program
-	char* vertexShader = App->GetProgram()->LoadShaderSource("./RenderExercise/VertexShader.glsl");
-	char* fragmentShader = App->GetProgram()->LoadShaderSource("./RenderExercise/FragmentShader.glsl");
+	char* vertexShader = App->GetProgramModule()->LoadShaderSource("./RenderExercise/VertexShader.glsl");
+	char* fragmentShader = App->GetProgramModule()->LoadShaderSource("./RenderExercise/FragmentShader.glsl");
 
-	unsigned vertexId = App->GetProgram()->CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned fragmentId = App->GetProgram()->CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	unsigned vertexId = App->GetProgramModule()->CompileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned fragmentId = App->GetProgramModule()->CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-	program = App->GetProgram()->CreateProgram(vertexId, fragmentId);
+	program = App->GetProgramModule()->CreateProgram(vertexId, fragmentId);
 
 	free(vertexShader);
 	free(fragmentShader);
@@ -36,7 +36,7 @@ bool ModuleRenderExercise::Init()
 	DirectX::ScratchImage image;
 	OpenGLMetadata openGlMeta;
 
-	baboonTexture = App->GetTexture()->LoadTexture(baboonPath);
+	baboonTexture = App->GetTextureModule()->LoadTexture(baboonPath);
 	// Creating VBO for triangle
 	
 	//float vtx_data[] = { 
@@ -80,8 +80,8 @@ update_status ModuleRenderExercise::Update(float deltaTime)
 	// Creating matrices for rendering
 	float4x4 model, view, proj;
 
-	proj = App->GetCamera()->GetProjectionMatrix();
-	view = App->GetCamera()->GetViewMatrix();
+	proj = App->GetCameraModule()->GetProjectionMatrix();
+	view = App->GetCameraModule()->GetViewMatrix();
 	
 	model = float4x4::identity;
 	//model = float4x4::FromTRS(

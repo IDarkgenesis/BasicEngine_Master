@@ -14,8 +14,8 @@ public:
 	update_status Update(float deltaTime) override;
 	bool CleanUp() override;
 private:
-	int programNoTextures = 0;
-	int programTextures = 0;
+	unsigned int programNoTextures = 0;
+	unsigned int programTextures = 0;
 
 	EngineModel* house;
 };

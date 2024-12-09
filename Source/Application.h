@@ -15,8 +15,7 @@ class ModuleEditor;
 class ModuleTexture;
 class ModuleTexture;
 
-class ModuleRenderExercise;
-class ModuleRenderMeshes;
+class ModuleModelViewer;
 
 class Application
 {
@@ -29,16 +28,17 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-    ModuleOpenGL* GetOpenGL() { return render; }
-    ModuleWindow* GetWindow() { return window; }
-    ModuleInput*  GetInput() { return input; }
-    ModuleProgram*  GetProgram() { return program; }
-    ModuleTexture*  GetTexture() { return texture; }
+    ModuleOpenGL* GetOpenGLModule() { return render; }
+    ModuleWindow* GetWindowModule() { return window; }
+    ModuleInput*  GetInputModule() { return input; }
+    ModuleProgram*  GetProgramModule() { return program; }
+    ModuleTexture*  GetTextureModule() { return texture; }
 
-    ModuleRenderExercise*  GetRenderExercise() { return renderExercise; }
-    ModuleCamera* GetCamera() { return camera; }
+    ModuleCamera* GetCameraModule() { return camera; }
 
-    ModuleEditor* GetEditor() { return editor; }
+    ModuleEditor* GetEditorModule() { return editor; }
+
+    ModuleModelViewer* GetModelViewerModule() { return modelViewer; }
 
 private:
 
@@ -48,13 +48,11 @@ private:
     ModuleProgram* program = nullptr;
     ModuleTexture* texture = nullptr;
 
-    ModuleDebugDraw* debugDraw = nullptr;
-
     ModuleCamera* camera = nullptr;
     ModuleEditor* editor = nullptr;
 
-    ModuleRenderExercise* renderExercise = nullptr;
-    ModuleRenderMeshes* renderMeshesExercise = nullptr;
+    ModuleDebugDraw* debugDraw = nullptr;
+    ModuleModelViewer* modelViewer = nullptr;
 
     std::list<Module*> modules;
 

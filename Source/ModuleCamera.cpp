@@ -3,6 +3,7 @@
 #include "MathGeoLib.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "ModuleModelViewer.h"
 
 ModuleCamera::ModuleCamera()
 {
@@ -31,7 +32,7 @@ bool ModuleCamera::Init()
 
 	int width = 0;
 	int height = 0;
-	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+	SDL_GetWindowSize(App->GetWindowModule()->window, &width, &height);
 
 	camera.verticalFov = 2.0f * atanf(tanf(camera.horizontalFov * 0.5f) * ((float)height / (float)width));
 
@@ -40,7 +41,7 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update(float deltaTime)
 {
-	ModuleInput* inputModule = App->GetInput();
+	ModuleInput* inputModule = App->GetInputModule();
 	
 	if(inputModule == nullptr) return UPDATE_CONTINUE;
 	
@@ -52,6 +53,7 @@ update_status ModuleCamera::Update(float deltaTime)
 	bool dKeyPressed = inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT;
 	bool qKeyPressed = inputModule->GetKey(SDL_SCANCODE_Q) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_Q) == KeyState::KEY_REPEAT;
 	bool eKeyPressed = inputModule->GetKey(SDL_SCANCODE_E) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_E) == KeyState::KEY_REPEAT;
+	bool fKeyPressed = inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_REPEAT;
 	bool rgihtKeyPressed = inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_REPEAT;
 	bool leftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_REPEAT;
 	bool upKeyPressed = inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_REPEAT;
@@ -105,8 +107,20 @@ update_status ModuleCamera::Update(float deltaTime)
 		if (mouseMotion.x > 0) RotateYaw(-deltaRotationAngle);
 		if (mouseMotion.x < 0) RotateYaw(deltaRotationAngle);
 	}
+	
+	if (fKeyPressed)
+	{
+		float3 maxModelValues = App->GetModelViewerModule()->GetModelMaximumValues();
+		float3 minModelValues = App->GetModelViewerModule()->GetModelMinimumValues();
+		
+		camera.pos = float3(maxModelValues.x / 2.f, maxModelValues.y / 2.f, maxModelValues.z * 5.f);
+		camera.front = -float3::unitZ;
+		camera.up = float3::unitY;
+		camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
+		movementScaleFactor = (maxModelValues - minModelValues).Length() / 2.f;
+	}
 
-	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f : cameraMoveSpeed * deltaTime;
+	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f * movementScaleFactor : cameraMoveSpeed * deltaTime * movementScaleFactor;
 
 	if (wKeyPressed) camera.pos += finalCameraSpeed * camera.front;
 
@@ -119,6 +133,7 @@ update_status ModuleCamera::Update(float deltaTime)
 	if (qKeyPressed) camera.pos += finalCameraSpeed * float3::unitY;
 
 	if (eKeyPressed) camera.pos -= finalCameraSpeed * float3::unitY;
+
 
 	return UPDATE_CONTINUE;
 }
@@ -179,7 +194,7 @@ void ModuleCamera::SetFOV(float newHorizontalFov)
 	int width = 0;
 	int height = 0;
 
-	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+	SDL_GetWindowSize(App->GetWindowModule()->window, &width, &height);
 
 	if (!width && !height) return;
 

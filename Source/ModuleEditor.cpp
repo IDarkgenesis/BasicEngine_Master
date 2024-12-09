@@ -27,13 +27,13 @@ bool ModuleEditor::Init()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 
-    ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window, App->GetOpenGL()->GetContext());
+    ImGui_ImplSDL2_InitForOpenGL(App->GetWindowModule()->window, App->GetOpenGLModule()->GetContext());
     ImGui_ImplOpenGL3_Init("#version 460");
 
     framerate = std::vector<float>(maximumPlotData, 0.f);
     frametime = std::vector<float>(maximumPlotData, 0.f);
 
-    SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+    SDL_GetWindowSize(App->GetWindowModule()->window, &width, &height);
 
 	return true;
 }
@@ -96,7 +96,7 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         // FOV Slider
         if (ImGui::SliderInt("FOV", &fov, 60, 110))
         {
-            App->GetCamera()->SetFOV(fov);
+            App->GetCameraModule()->SetFOV(fov);
         }
 
         ImGui::Separator();
@@ -110,7 +110,7 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         
         if (!fullscreen && !fullDesktop && resizableWindow && ImGui::Button("Resize"))
         {
-            App->GetWindow()->ResizeWindow(width, height);
+            App->GetWindowModule()->ResizeWindow(width, height);
         }
 
         ImGui::Separator();
@@ -120,14 +120,14 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         {
             Uint32 flag = fullscreen ? SDL_WINDOW_FULLSCREEN : 0;
             fullDesktop = false;
-            App->GetWindow()->SetWindowFullscreen(flag);
+            App->GetWindowModule()->SetWindowFullscreen(flag);
         }
 
         ImGui::SameLine();
         if (ImGui::Checkbox("Allow Resize", &resizableWindow))
         {
             SDL_bool resizeable = resizableWindow ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE;
-            App->GetWindow()->SetWindowResizable(resizeable);
+            App->GetWindowModule()->SetWindowResizable(resizeable);
         }
 
         if (ImGui::Checkbox("Borderless", &borderless))
@@ -135,8 +135,8 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
             SDL_bool bordered = borderless ? SDL_bool::SDL_FALSE : SDL_bool::SDL_TRUE;
             fullscreen = false;
             fullDesktop = false;
-            App->GetWindow()->SetWindowFullscreen(0);
-            App->GetWindow()->SetWindowBorderless(bordered);
+            App->GetWindowModule()->SetWindowFullscreen(0);
+            App->GetWindowModule()->SetWindowBorderless(bordered);
         }
         
         ImGui::SameLine();
@@ -144,7 +144,7 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         {
             Uint32 flag = fullDesktop ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0;
             fullscreen = false;
-            App->GetWindow()->SetWindowFullscreen(flag);
+            App->GetWindowModule()->SetWindowFullscreen(flag);
         }
     }
 

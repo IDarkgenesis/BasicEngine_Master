@@ -87,8 +87,8 @@ update_status ModuleInput::PreUpdate()
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 			{
-				App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-				App->GetEditor()->SetNewScreenSize(sdlEvent.window.data1, sdlEvent.window.data2);
+				App->GetOpenGLModule()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				App->GetEditorModule()->SetNewScreenSize(sdlEvent.window.data1, sdlEvent.window.data2);
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:

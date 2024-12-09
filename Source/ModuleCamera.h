@@ -40,6 +40,8 @@ private:
 	const float maximumNegativePitch = -89.f * (PI / 180.f);
 	const float DEGTORAD = PI / 180.f;
 
+	float movementScaleFactor = 1.f;
+
 	float cameraMoveSpeed = 7.5f;
 	float cameraRotationAngle = 135.f * DEGTORAD;
 	

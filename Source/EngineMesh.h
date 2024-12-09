@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MathGeoLib/include/Math/float4x4.h"
+#include "MathGeoLib/include/Math/float3.h"
 
 namespace tinygltf
 {
@@ -19,6 +20,9 @@ public:
 	void LoadEBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive);
 	void CreateVAO();
 
+	float3 GetMaximumPosition() const { return maximumPosition; } 
+	float3 GetMinimumPosition() const { return minimumPosition; }
+
 	void Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix, float4x4& modelMatrix);
 
 private:
@@ -30,5 +34,8 @@ private:
 	int vertexCount = 0;
 	int textureCoordCount = 0;
 	int indexCount = 0;
+
+	float3 maximumPosition;
+	float3 minimumPosition;
 };
 

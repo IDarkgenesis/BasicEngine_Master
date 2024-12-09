@@ -14,6 +14,8 @@
 
 EngineMesh::EngineMesh()
 {
+	maximumPosition = float3(0.f, 0.f, 0.f);
+	minimumPosition = float3(0.f, 0.f, 0.f);
 }
 
 EngineMesh::~EngineMesh()
@@ -29,12 +31,12 @@ void EngineMesh::LoadVBO(const tinygltf::Model& inModel, const tinygltf::Mesh& i
 	
 	if (positionIterator != inPrimitive.attributes.end()) {
 		const tinygltf::Accessor& positionAccessor = inModel.accessors[positionIterator->second];
-		vertexCount = positionAccessor.count;
+		vertexCount = (int)positionAccessor.count;
 	}
 
 	if (textureIterator != inPrimitive.attributes.end()) {
 		const tinygltf::Accessor& textureAccessor = inModel.accessors[textureIterator->second];
-		textureCoordCount = textureAccessor.count;
+		textureCoordCount = (int)textureAccessor.count;
 	}
 
 	if ((vertexCount + textureCoordCount) > 0)
@@ -49,9 +51,12 @@ void EngineMesh::LoadVBO(const tinygltf::Model& inModel, const tinygltf::Mesh& i
 	if (vertexCount > 0)
 	{
 		const tinygltf::Accessor& positionAccessor = inModel.accessors[positionIterator->second];
-		
+
 		SDL_assert(positionAccessor.type == TINYGLTF_TYPE_VEC3);
 		SDL_assert(positionAccessor.componentType == GL_FLOAT);
+
+		maximumPosition = float3((float)positionAccessor.maxValues[0], (float)positionAccessor.maxValues[1], (float)positionAccessor.maxValues[2]);
+		minimumPosition = float3((float)positionAccessor.minValues[0], (float)positionAccessor.minValues[1], (float)positionAccessor.minValues[2]);
 
 		const tinygltf::BufferView& positionBufferView = inModel.bufferViews[positionAccessor.bufferView];
 		const tinygltf::Buffer& positionBuffer = inModel.buffers[positionBufferView.buffer];

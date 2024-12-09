@@ -4,14 +4,13 @@
 #include "ModuleOpenGL.h"
 #include "ModuleInput.h"
 #include "ModuleProgram.h"
-#include "ModuleRenderExercise.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleCamera.h"
 #include "ModuleEditor.h"
 #include "ModuleTexture.h"
 #include "SDL_timer.h"
 
-#include "ModuleRenderMeshes.h"
+#include "ModuleModelViewer.h"
 
 using namespace std;
 
@@ -24,8 +23,9 @@ Application::Application()
 	modules.push_back(texture = new ModuleTexture());
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(camera = new ModuleCamera());
-	modules.push_back(renderExercise = new ModuleRenderExercise());
-	modules.push_back(renderMeshesExercise = new ModuleRenderMeshes());
+
+	modules.push_back(modelViewer = new ModuleModelViewer());
+
 	modules.push_back(debugDraw = new ModuleDebugDraw());
 	modules.push_back(editor = new ModuleEditor());
 }

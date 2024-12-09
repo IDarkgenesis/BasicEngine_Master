@@ -15,6 +15,10 @@
 
 EngineModel::EngineModel()
 {
+	modelMatrix = float4x4::identity;
+
+	minValues = float3::zero;
+	maxValues = float3::zero;
 }
 
 EngineModel::~EngineModel()
@@ -40,6 +44,8 @@ void EngineModel::Load(const char* modelPath)
 		GLOG("Error loading %s: %s", modelPath, error.c_str());
 	}
 
+	bool firstMesh = true;
+
 	for (tinygltf::Mesh& sourceMesh : model.meshes)
 	{
 		for (tinygltf::Primitive& primitive : sourceMesh.primitives)
@@ -49,6 +55,21 @@ void EngineModel::Load(const char* modelPath)
 			if (primitive.indices >= 0) newMesh->LoadEBO(model, sourceMesh, primitive);
 			newMesh->CreateVAO();
 			meshes.push_back(newMesh);
+
+			float3 meshMaxValues = newMesh->GetMaximumPosition();
+			float3 meshMinValues = newMesh->GetMinimumPosition();
+
+			if (firstMesh)
+			{
+				firstMesh = false;
+				maxValues = meshMaxValues;
+				minValues = meshMinValues;
+			}
+			else
+			{
+				maxValues = float3(Max(maxValues.x, meshMaxValues.x), Max(maxValues.y, meshMaxValues.y), Max(maxValues.z, meshMaxValues.z));
+				minValues = float3(Min(minValues.x, meshMinValues.x), Min(minValues.y, meshMinValues.y), Min(minValues.z, meshMinValues.z));
+			}
 		}
 	}
 
@@ -80,7 +101,7 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			std::wstring wideUri = std::wstring(texturePathString.begin(), texturePathString.end());
 			const wchar_t* texturePath = wideUri.c_str();
 
-			textureId = App->GetTexture()->LoadTexture(texturePath);
+			textureId = App->GetTextureModule()->LoadTexture(texturePath);
 		}
 		textures.push_back(textureId);
 	}

@@ -30,7 +30,7 @@ bool ModuleOpenGL::Init()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	context = SDL_GL_CreateContext(App->GetWindow()->window);
+	context = SDL_GL_CreateContext(App->GetWindowModule()->window);
 	GLenum err = glewInit();
 
 	GLOG("Using Glew %s", glewGetString(GLEW_VERSION));
@@ -51,7 +51,7 @@ update_status ModuleOpenGL::PreUpdate()
 {
 	int CurrentWidth = 0;
 	int CurrentHeight = 0;
-	SDL_GetWindowSize(App->GetWindow()->window, &CurrentWidth, &CurrentHeight);
+	SDL_GetWindowSize(App->GetWindowModule()->window, &CurrentWidth, &CurrentHeight);
 
 	if (CurrentWidth && CurrentHeight) {
 		glViewport(0,0, CurrentWidth, CurrentHeight);
@@ -74,7 +74,7 @@ update_status ModuleOpenGL::Update(float deltaTime)
 
 update_status ModuleOpenGL::PostUpdate()
 {
-	SDL_GL_SwapWindow(App->GetWindow()->window);
+	SDL_GL_SwapWindow(App->GetWindowModule()->window);
 
 	return UPDATE_CONTINUE;
 }
@@ -84,7 +84,7 @@ bool ModuleOpenGL::CleanUp()
 {
 	GLOG("Destroying renderer");
 
-	SDL_GL_DeleteContext(App->GetWindow()->window);
+	SDL_GL_DeleteContext(App->GetWindowModule()->window);
 
 	return true;
 }
@@ -93,6 +93,6 @@ void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
 	// Recalculating Vertical FOV -> important height / width
 	float aspectRatio = (float)height / width;
-	App->GetCamera()->SetAspectRatio(aspectRatio);
+	App->GetCameraModule()->SetAspectRatio(aspectRatio);
 }
 
