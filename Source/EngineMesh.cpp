@@ -154,20 +154,14 @@ void EngineMesh::CreateVAO()
 	glBindVertexArray(0);
 }
 
-void EngineMesh::Render(int program, int texturePosition)
+void EngineMesh::Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix, float4x4& modelMatrix)
 {
-	float4x4 proj, view, model;
-	
-	proj = App->GetCamera()->GetProjectionMatrix();
-	view = App->GetCamera()->GetViewMatrix();
-	
-	model = float4x4::identity;
-	
+
 	glUseProgram(program);
 
-	glUniformMatrix4fv(0, 1, GL_TRUE, &proj[0][0]);
-	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(0, 1, GL_TRUE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(1, 1, GL_TRUE, &viewMatrix[0][0]);
+	glUniformMatrix4fv(2, 1, GL_TRUE, &modelMatrix[0][0]);
 
 	if (texturePosition > 0)
 	{

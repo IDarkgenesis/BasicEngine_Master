@@ -19,7 +19,7 @@ public:
 	void LoadEBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive);
 	void CreateVAO();
 
-	void Render(int program, int texturePosition);
+	void Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix, float4x4& modelMatrix);
 
 private:
 	unsigned int vbo = 0;

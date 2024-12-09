@@ -17,10 +17,6 @@ private:
 	int programNoTextures = 0;
 	int programTextures = 0;
 
-	EngineModel* triangleNoIndices;
-	EngineModel* triangleIndices;
-	EngineModel* box;
-	EngineModel* textureBox;
 	EngineModel* house;
 };
 

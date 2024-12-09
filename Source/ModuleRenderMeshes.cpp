@@ -8,19 +8,11 @@
 
 ModuleRenderMeshes::ModuleRenderMeshes()
 {
-    triangleNoIndices = new EngineModel();
-    triangleIndices = new EngineModel();
-    box = new EngineModel();
-    textureBox = new EngineModel();
     house = new EngineModel();
 }
 
 ModuleRenderMeshes::~ModuleRenderMeshes()
 {
-    delete triangleNoIndices;
-    delete triangleIndices;
-    delete box;
-    delete textureBox;
     delete house;
 }
 
@@ -50,22 +42,29 @@ bool ModuleRenderMeshes::Init()
     free(vertexShader);
     free(fragmentShader);
 
-    triangleNoIndices->Load("./RenderMeshes/TriangleWithoutIndices.gltf");
-    triangleIndices->Load("./RenderMeshes/Triangle.gltf");
-    box->Load("./RenderMeshes/BoxInterleaved.gltf");
-    textureBox->Load("../../ModelsTextures/BoxTextured.gltf");
+    // LOADING HOUSE MODEL
     house->Load("../../ModelsTextures/BakerHouse.gltf");
+
+    float4x4 houseModelMatrix = float4x4::FromTRS(
+        float3(0.0f, 0.0f, 0.0f),
+        float4x4::identity,
+        float3(100.0f, 100.0f, 100.0f)
+    );
+
+    house->SetModelMatrix(houseModelMatrix);
 
     return true;
 }
 
 update_status ModuleRenderMeshes::Update(float deltaTime)
 {
-    //triangleNoIndices->Render(programNoTextures);
-    //triangleIndices->Render(programNoTextures);
-    //box->Render(programNoTextures);
-    //textureBox->Render(programTextures);
-    house->Render(programTextures);
+
+    float4x4 proj, view;
+
+    proj = App->GetCamera()->GetProjectionMatrix();
+    view = App->GetCamera()->GetViewMatrix();
+
+    house->Render(programTextures, proj, view);
     return UPDATE_CONTINUE;
 }
 

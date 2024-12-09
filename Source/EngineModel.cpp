@@ -86,11 +86,16 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 	}
 }
 
-void EngineModel::Render(int program)
+void EngineModel::SetModelMatrix(float4x4& newModelMatrix)
+{
+	modelMatrix = newModelMatrix;
+}
+
+void EngineModel::Render(int program, float4x4& projectionMatrix, float4x4& viewMatrix)
 {
 	for (EngineMesh* currentMesh : meshes)
 	{
 		int texturePostiion = textures.size() > 0 ? textures[0] : 0;
-		currentMesh->Render(program, texturePostiion);
+		currentMesh->Render(program, texturePostiion, projectionMatrix, viewMatrix, modelMatrix);
 	}
 }
