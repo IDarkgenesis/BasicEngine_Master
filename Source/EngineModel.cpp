@@ -46,6 +46,7 @@ void EngineModel::Load(const char* modelPath)
 
 	bool firstMesh = true;
 
+	// TODO: INSTEAD OF ITERATING THROUGH THE MESHES, ITERATE THROUGH NODES THAT CONTAIN THE MESH POINTER AND ALSO CONTAINS THE TRANSFORMS FOR EACH MESH, PUT MODEL MATRIX INSIDE EACH MESH !!!!!!!
 	for (tinygltf::Mesh& sourceMesh : model.meshes)
 	{
 		for (tinygltf::Primitive& primitive : sourceMesh.primitives)
