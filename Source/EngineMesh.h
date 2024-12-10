@@ -35,7 +35,7 @@ private:
 
 	int vertexCount = 0;
 	int textureCoordCount = 0;
-	int indexCount = 0;
+	unsigned int indexCount = 0;
 
 	float4x4 basicModelMatrix;
 

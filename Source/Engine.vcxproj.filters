@@ -159,7 +159,9 @@
     <ClCompile Include="ModuleRenderMeshes.cpp">
       <Filter>Exercices</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleModelViewer.cpp" />
+    <ClCompile Include="ModuleModelViewer.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -245,7 +247,9 @@
     <ClInclude Include="ModuleRenderMeshes.h">
       <Filter>Exercices</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleModelViewer.h" />
+    <ClInclude Include="ModuleModelViewer.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathLibFiles">

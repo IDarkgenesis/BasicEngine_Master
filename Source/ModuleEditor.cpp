@@ -85,10 +85,10 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
     {
         char title[25];
         sprintf_s(title, 25, "Framerate %.1f", framerate[currentPlotData]);
-        ImGui::PlotHistogram("##framerate", &framerate[0], framerate.size(), currentPlotData, title, 0.f, 240.f, ImVec2(310, 100));
+        ImGui::PlotHistogram("##framerate", &framerate[0], (int)framerate.size(), currentPlotData, title, 0.f, 240.f, ImVec2(310, 100));
 
         sprintf_s(title, 25, "Milliseconds %0.1f", frametime[currentPlotData]);
-        ImGui::PlotHistogram("##milliseconds", &frametime[0], frametime.size(), currentPlotData, title, 0.f, 40.f, ImVec2(310, 100));
+        ImGui::PlotHistogram("##milliseconds", &frametime[0], (int)frametime.size(), currentPlotData, title, 0.f, 40.f, ImVec2(310, 100));
     }
 
     if (ImGui::CollapsingHeader("Window"))
@@ -96,7 +96,7 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         // FOV Slider
         if (ImGui::SliderInt("FOV", &fov, 60, 110))
         {
-            App->GetCameraModule()->SetFOV(fov);
+            App->GetCameraModule()->SetFOV((float)fov);
         }
 
         ImGui::Separator();

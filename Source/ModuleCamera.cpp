@@ -47,17 +47,17 @@ update_status ModuleCamera::Update(float deltaTime)
 	
 
 	bool shiftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_REPEAT;
-	bool wKeyPressed = inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT;
-	bool sKeyPressed = inputModule->GetKey(SDL_SCANCODE_S) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT;
-	bool aKeyPressed = inputModule->GetKey(SDL_SCANCODE_A) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT;
-	bool dKeyPressed = inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT;
+	
 	bool qKeyPressed = inputModule->GetKey(SDL_SCANCODE_Q) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_Q) == KeyState::KEY_REPEAT;
 	bool eKeyPressed = inputModule->GetKey(SDL_SCANCODE_E) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_E) == KeyState::KEY_REPEAT;
+	
 	bool fKeyPressed = inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_REPEAT;
+	
 	bool rgihtKeyPressed = inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_REPEAT;
 	bool leftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_REPEAT;
 	bool upKeyPressed = inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_REPEAT;
 	bool downKeyPressed = inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_REPEAT;
+	
 	bool leftClick = inputModule->GetMouseButtonDown(SDL_BUTTON_LEFT);
 	bool rightClick = inputModule->GetMouseButtonDown(SDL_BUTTON_RIGHT);
 	const float2 mouseMove = inputModule->GetMouseMotion();
@@ -92,21 +92,6 @@ update_status ModuleCamera::Update(float deltaTime)
 		RotateYaw(deltaRotationAngle);
 	}
 
-	if (rightClick) {
-		const float2 mouseMotion = inputModule->GetMouseMotion();
-		if (mouseMotion.y > 0 && (currentPitchAngle + deltaRotationAngle) < maximumPositivePitch)
-		{
-			currentPitchAngle += deltaRotationAngle;
-			RotatePitch(-deltaRotationAngle);
-		}
-		else if (mouseMotion.y < 0 && (currentPitchAngle - deltaRotationAngle) > maximumNegativePitch)
-		{
-			currentPitchAngle -= deltaRotationAngle;
-			RotatePitch(deltaRotationAngle);
-		}
-		if (mouseMotion.x > 0) RotateYaw(-deltaRotationAngle);
-		if (mouseMotion.x < 0) RotateYaw(deltaRotationAngle);
-	}
 	
 	if (fKeyPressed)
 	{
@@ -120,20 +105,84 @@ update_status ModuleCamera::Update(float deltaTime)
 		movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
 	}
 
+	// WASD Camera movement
 	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f * movementScaleFactor : cameraMoveSpeed * deltaTime * movementScaleFactor;
 
-	if (wKeyPressed) camera.pos += finalCameraSpeed * camera.front;
+	WASD_Direction cameraWasd = GetWasdDirection();
 
-	if (sKeyPressed) camera.pos -= finalCameraSpeed * camera.front;
-	
-	if (aKeyPressed) camera.pos -= finalCameraSpeed * camera.WorldRight();
-	
-	if (dKeyPressed) camera.pos += finalCameraSpeed * camera.WorldRight();
+	switch (cameraWasd)
+	{
+	case FRONT:
+		camera.pos += finalCameraSpeed * camera.front;
+		break;
+	case RIGHT:
+		camera.pos += finalCameraSpeed * camera.WorldRight();
+		break;
+	case LEFT:
+		camera.pos -= finalCameraSpeed * camera.WorldRight();
+		break;
+	case BACK:
+		camera.pos -= finalCameraSpeed * camera.front;
+		break;
+	case FRONT_RIGHT:
+		camera.pos += (finalCameraSpeed / 2.f) * camera.front;
+		camera.pos += (finalCameraSpeed / 2.f) * camera.WorldRight();
+		break;
+	case FRONT_LEFT:
+		camera.pos += (finalCameraSpeed / 2.f) * camera.front;
+		camera.pos -= (finalCameraSpeed / 2.f) * camera.WorldRight();
+		break;
+	case BACK_RIGHT:
+		camera.pos -= (finalCameraSpeed / 2.f) * camera.front;
+		camera.pos += (finalCameraSpeed / 2.f) * camera.WorldRight();
+		break;
+	case BACK_LEFT:
+		camera.pos -= (finalCameraSpeed / 2.f) * camera.front;
+		camera.pos -= (finalCameraSpeed / 2.f) * camera.WorldRight();
+		break;
+	default:
+		break;
+	}
 
 	if (qKeyPressed) camera.pos += finalCameraSpeed * float3::unitY;
 
 	if (eKeyPressed) camera.pos -= finalCameraSpeed * float3::unitY;
 
+	if (rightClick) {
+		const float2 mouseMotion = inputModule->GetMouseMotion();
+		float angleX, angleY;
+		angleY = mouseMotion.y * DEGTORAD * mouseSensitivity;
+		angleX = mouseMotion.x * DEGTORAD * mouseSensitivity;
+
+		if (angleY > 0 && (currentPitchAngle - angleY) > maximumNegativePitch)
+		{
+			currentPitchAngle -= angleY;
+			RotatePitch(-angleY);
+		}
+		else if (angleY < 0 && (currentPitchAngle - angleY) < maximumPositivePitch)
+		{
+			currentPitchAngle -= angleY;
+			RotatePitch(-angleY);
+		}
+
+		if (angleX)
+		{
+			RotateYaw(-angleX);
+		}
+
+		/*if (mouseMotion.y > 0 && (currentPitchAngle + deltaRotationAngle) < maximumPositivePitch)
+		{
+			currentPitchAngle += deltaRotationAngle;
+			RotatePitch(-deltaRotationAngle);
+		}
+		else if (mouseMotion.y < 0 && (currentPitchAngle - deltaRotationAngle) > maximumNegativePitch)
+		{
+			currentPitchAngle -= deltaRotationAngle;
+			RotatePitch(deltaRotationAngle);
+		}
+		if (mouseMotion.x > 0) RotateYaw(-deltaRotationAngle);
+		if (mouseMotion.x < 0) RotateYaw(deltaRotationAngle);*/
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -261,4 +310,27 @@ void ModuleCamera::RotatePitch(float deltaAngle)
 
 	float3 oldUp = camera.up.Normalized();
 	camera.up = quatRotator.Mul(oldUp);
+}
+
+WASD_Direction ModuleCamera::GetWasdDirection()
+{
+	ModuleInput* inputModule = App->GetInputModule();
+
+	if (inputModule == nullptr) return NONE;
+
+	bool forward = inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT;
+	bool right = inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT;
+	bool left = inputModule->GetKey(SDL_SCANCODE_A) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT;
+	bool back = inputModule->GetKey(SDL_SCANCODE_S) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT;
+
+	if ( (forward && !right && !left && !back) || (forward && left && right && !back) ) return FRONT;
+	if ( (!forward && right && !left && !back) || (forward && !left && right && back) ) return RIGHT;
+	if ( (!forward && !right && left && !back) || (forward && left && !right && back) ) return LEFT;
+	if ( (!forward && !right && !left && back) || (!forward && left && right && back) ) return BACK;
+	if (forward && right && !left && !back) return FRONT_RIGHT;
+	if (forward && !right && left && !back) return FRONT_LEFT;
+	if (!forward && right && !left && back) return BACK_RIGHT;
+	if (!forward && !right && left && back) return BACK_LEFT;
+
+	return NONE;
 }

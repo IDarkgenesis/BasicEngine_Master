@@ -6,6 +6,19 @@
 
 const float PI = 3.14159265359f;
 
+enum WASD_Direction
+{
+	FRONT,
+	RIGHT,
+	LEFT,
+	BACK,
+	FRONT_RIGHT,
+	FRONT_LEFT,
+	BACK_RIGHT,
+	BACK_LEFT,
+	NONE
+};
+
 class ModuleCamera : public Module
 {
 public:
@@ -44,10 +57,12 @@ private:
 
 	float cameraMoveSpeed = 7.5f;
 	float cameraRotationAngle = 135.f * DEGTORAD;
+	float mouseSensitivity = 0.3f;
 	
 	float currentPitchAngle = 0.f;
 
 	void RotateYaw(float deltaAngle);
 	void RotatePitch(float deltaAngle);
+	WASD_Direction GetWasdDirection();
 };
 

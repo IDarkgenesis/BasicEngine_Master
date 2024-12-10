@@ -113,7 +113,7 @@ void EngineMesh::LoadEBO(const tinygltf::Model& inModel, const tinygltf::Mesh& i
 		const tinygltf::BufferView& indexBufferView = inModel.bufferViews[indexAccessor.bufferView];
 		const tinygltf::Buffer& indexBuffer = inModel.buffers[indexBufferView.buffer];
 
-		indexCount = indexAccessor.count;
+		indexCount = (unsigned int)indexAccessor.count;
 
 		const unsigned char* bufferStart = &(indexBuffer.data[indexAccessor.byteOffset + indexBufferView.byteOffset]);
 
