@@ -117,7 +117,7 @@ update_status ModuleCamera::Update(float deltaTime)
 		camera.front = -float3::unitZ;
 		camera.up = float3::unitY;
 		camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
-		movementScaleFactor = (maxModelValues - minModelValues).Length() / 2.f;
+		movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
 	}
 
 	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f * movementScaleFactor : cameraMoveSpeed * deltaTime * movementScaleFactor;

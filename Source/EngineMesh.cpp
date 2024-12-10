@@ -14,6 +14,7 @@
 
 EngineMesh::EngineMesh()
 {
+	basicModelMatrix = float4x4::identity;
 	maximumPosition = float3(0.f, 0.f, 0.f);
 	minimumPosition = float3(0.f, 0.f, 0.f);
 }
@@ -159,14 +160,19 @@ void EngineMesh::CreateVAO()
 	glBindVertexArray(0);
 }
 
-void EngineMesh::Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix, float4x4& modelMatrix)
+void EngineMesh::SetBasicModelMatrix(float4x4& newModelMatrix)
+{
+	basicModelMatrix = newModelMatrix;
+}
+
+void EngineMesh::Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix)
 {
 
 	glUseProgram(program);
 
 	glUniformMatrix4fv(0, 1, GL_TRUE, &projectionMatrix[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &viewMatrix[0][0]);
-	glUniformMatrix4fv(2, 1, GL_TRUE, &modelMatrix[0][0]);
+	glUniformMatrix4fv(2, 1, GL_TRUE, &basicModelMatrix[0][0]);
 
 	if (texturePosition > 0)
 	{

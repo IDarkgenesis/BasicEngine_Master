@@ -15,8 +15,6 @@
 
 EngineModel::EngineModel()
 {
-	modelMatrix = float4x4::identity;
-
 	minValues = float3::zero;
 	maxValues = float3::zero;
 }
@@ -46,30 +44,68 @@ void EngineModel::Load(const char* modelPath)
 
 	bool firstMesh = true;
 
-	// TODO: INSTEAD OF ITERATING THROUGH THE MESHES, ITERATE THROUGH NODES THAT CONTAIN THE MESH POINTER AND ALSO CONTAINS THE TRANSFORMS FOR EACH MESH, PUT MODEL MATRIX INSIDE EACH MESH !!!!!!!
-	for (tinygltf::Mesh& sourceMesh : model.meshes)
+	for (tinygltf::Node currentNode : model.nodes)
 	{
-		for (tinygltf::Primitive& primitive : sourceMesh.primitives)
+		if (currentNode.name != "RootNode")
 		{
-			EngineMesh* newMesh = new EngineMesh();
-			newMesh->LoadVBO(model, sourceMesh, primitive);
-			if (primitive.indices >= 0) newMesh->LoadEBO(model, sourceMesh, primitive);
-			newMesh->CreateVAO();
-			meshes.push_back(newMesh);
+			// Creating basic model transform matrix based on node information
+			float4x4 rotationX, rotationY, rotationZ, finalRotation;
+			float3 translation, scale;
 
-			float3 meshMaxValues = newMesh->GetMaximumPosition();
-			float3 meshMinValues = newMesh->GetMinimumPosition();
+			finalRotation = float4x4::identity;
+			translation = float3::zero; 
+			scale = float3::one;
 
-			if (firstMesh)
+			if (currentNode.rotation.size() > 0)
 			{
-				firstMesh = false;
-				maxValues = meshMaxValues;
-				minValues = meshMinValues;
+				rotationX = float4x4::RotateX(currentNode.rotation[0]);
+				rotationY = float4x4::RotateX(currentNode.rotation[1]);
+				rotationZ = float4x4::RotateX(currentNode.rotation[2]);
+
+				finalRotation = rotationX * rotationY * rotationZ;
 			}
-			else
+
+			if (currentNode.translation.size() > 0)
 			{
-				maxValues = float3(Max(maxValues.x, meshMaxValues.x), Max(maxValues.y, meshMaxValues.y), Max(maxValues.z, meshMaxValues.z));
-				minValues = float3(Min(minValues.x, meshMinValues.x), Min(minValues.y, meshMinValues.y), Min(minValues.z, meshMinValues.z));
+				translation = float3(currentNode.translation[0], currentNode.translation[1], currentNode.translation[2]);
+			}
+
+			if (currentNode.scale.size() > 0)
+			{
+				scale = float3(currentNode.scale[0], currentNode.scale[1], currentNode.scale[2]);
+			}
+
+			float4x4 basicModelMatrix = float4x4::FromTRS(
+				translation,
+				finalRotation,
+				scale
+				);
+
+			for (tinygltf::Primitive& primitive : model.meshes[currentNode.mesh].primitives)
+			{
+				EngineMesh* newMesh = new EngineMesh();
+				newMesh->LoadVBO(model, model.meshes[currentNode.mesh], primitive);
+				if (primitive.indices >= 0) newMesh->LoadEBO(model, model.meshes[currentNode.mesh], primitive);
+				newMesh->CreateVAO();
+
+				float3 meshMaxValues = newMesh->GetMaximumPosition().Mul(scale);
+				float3 meshMinValues = newMesh->GetMinimumPosition().Mul(scale);
+
+				if (firstMesh)
+				{
+					firstMesh = false;
+					maxValues = meshMaxValues;
+					minValues = meshMinValues;
+				}
+				else
+				{
+					maxValues = float3(Max(maxValues.x, meshMaxValues.x), Max(maxValues.y, meshMaxValues.y), Max(maxValues.z, meshMaxValues.z));
+					minValues = float3(Min(minValues.x, meshMinValues.x), Min(minValues.y, meshMinValues.y), Min(minValues.z, meshMinValues.z));
+				}
+
+				newMesh->SetBasicModelMatrix(basicModelMatrix);
+				
+				meshes.push_back(newMesh);
 			}
 		}
 	}
@@ -108,16 +144,11 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 	}
 }
 
-void EngineModel::SetModelMatrix(float4x4& newModelMatrix)
-{
-	modelMatrix = newModelMatrix;
-}
-
 void EngineModel::Render(int program, float4x4& projectionMatrix, float4x4& viewMatrix)
 {
 	for (EngineMesh* currentMesh : meshes)
 	{
 		int texturePostiion = textures.size() > 0 ? textures[0] : 0;
-		currentMesh->Render(program, texturePostiion, projectionMatrix, viewMatrix, modelMatrix);
+		currentMesh->Render(program, texturePostiion, projectionMatrix, viewMatrix);
 	}
 }

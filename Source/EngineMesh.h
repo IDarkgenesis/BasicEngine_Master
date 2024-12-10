@@ -23,7 +23,9 @@ public:
 	float3 GetMaximumPosition() const { return maximumPosition; } 
 	float3 GetMinimumPosition() const { return minimumPosition; }
 
-	void Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix, float4x4& modelMatrix);
+	void SetBasicModelMatrix(float4x4& newModelMatrix);
+
+	void Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix);
 
 private:
 	unsigned int vbo = 0;
@@ -34,6 +36,8 @@ private:
 	int vertexCount = 0;
 	int textureCoordCount = 0;
 	int indexCount = 0;
+
+	float4x4 basicModelMatrix;
 
 	float3 maximumPosition;
 	float3 minimumPosition;
