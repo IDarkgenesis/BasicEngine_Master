@@ -42,17 +42,14 @@ bool ModuleCamera::Init()
 update_status ModuleCamera::Update(float deltaTime)
 {
 	ModuleInput* inputModule = App->GetInputModule();
+
+	
 	
 	if(inputModule == nullptr) return UPDATE_CONTINUE;
 
 	// Changing camera speed based on SHIFT key press
 	bool shiftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_REPEAT;
 	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f * movementScaleFactor : cameraMoveSpeed * deltaTime * movementScaleFactor;
-
-	// Orbiting camera
-	// TODO: Try rotating camera position through world Y axis and use look at matrix with center of geometry bounding box as target
-	bool leftClick = inputModule->GetMouseButtonDown(SDL_BUTTON_LEFT);
-	bool lAltKeyPressed = inputModule->GetKey(SDL_SCANCODE_LALT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LALT) == KeyState::KEY_REPEAT;
 	
 	// Focus the scene object
 	bool fKeyPressed = inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_REPEAT;
@@ -67,6 +64,22 @@ update_status ModuleCamera::Update(float deltaTime)
 		camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
 		movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
 	}
+
+	// Orbiting camera
+	// TODO: Try rotating camera position through world Y axis and use look at matrix with center of geometry bounding box as target
+	bool leftClick = inputModule->GetMouseButtonDown(SDL_BUTTON_LEFT);
+	bool lAltKeyPressed = inputModule->GetKey(SDL_SCANCODE_LALT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LALT) == KeyState::KEY_REPEAT;
+	if (leftClick && lAltKeyPressed)
+	{
+		orbiting = !orbiting;
+	}
+
+	if (orbiting)
+	{
+		camera.pos = float3x3::RotateY(cameraRotationAngle * deltaTime).MulPos(camera.pos);
+		return UPDATE_CONTINUE;
+	}
+	
 	
 	// Allow camera rotation with arrow keys
 	bool rgihtKeyPressed = inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_REPEAT;
@@ -111,6 +124,7 @@ update_status ModuleCamera::Update(float deltaTime)
 
 		const float2 mouseMotion = inputModule->GetMouseMotion();
 		float angleX, angleY;
+
 		angleY = mouseMotion.y * DEGTORAD * mouseSensitivity;
 		angleX = mouseMotion.x * DEGTORAD * mouseSensitivity;
 
@@ -193,7 +207,13 @@ float4x4 ModuleCamera::GetLookAtMatrix(const float3& cameraPosition, const float
 	float3 up = float3(right.Cross(forward)).Normalized();
 
 	
-	float4x4 viewMatrix = float4x4(float4(right, 0), float4(up, 0), -float4(forward, 0), float4(float3::zero, 1)) * float4x4(float4(1, 0, 0, -cameraPosition.x), float4(0, 1, 0, -cameraPosition.y), float4(0, 0, 1, -cameraPosition.z), float4(0, 0, 0, 1));
+	float4x4 viewMatrix = float4x4(
+		float4(right, -cameraPosition.Dot(right)),
+		float4(up, -cameraPosition.Dot(up)),
+		float4(-forward, cameraPosition.Dot(forward)),
+		float4(0.f, 0.f, 0.f, 1)
+	);
+
 	viewMatrix.Transpose();
 	return viewMatrix;
 }
@@ -205,7 +225,13 @@ float4x4 ModuleCamera::GetLookAtMatrix(const float3& targetPosition) const
 	float3 up = float3(right.Cross(forward)).Normalized();
 
 
-	float4x4 viewMatrix = float4x4(float4(right, 0), float4(up, 0), -float4(forward, 0), float4(float3::zero, 1)) * float4x4(float4(1, 0, 0, -camera.pos.x), float4(0, 1, 0, -camera.pos.y), float4(0, 0, 1, -camera.pos.z), float4(0, 0, 0, 1));
+	float4x4 viewMatrix = float4x4(
+		float4(right, -camera.pos.Dot(right)),
+		float4(up, -camera.pos.Dot(up)),
+		float4(-forward, camera.pos.Dot(forward)),
+		float4(0.f, 0.f, 0.f, 1)
+	);
+
 	viewMatrix.Transpose();
 	return viewMatrix;
 }
@@ -217,13 +243,21 @@ float4x4 ModuleCamera::GetLookAtMatrix() const
 	float3 up = float3(right.Cross(forward)).Normalized();
 
 
-	float4x4 viewMatrix = float4x4(float4(right, 0), float4(up, 0), -float4(forward, 0), float4(float3::zero, 1)) * float4x4(float4(1, 0, 0, -camera.pos.x), float4(0, 1, 0, -camera.pos.y), float4(0, 0, 1, -camera.pos.z), float4(0, 0, 0, 1));
+	float4x4 viewMatrix = float4x4(
+		float4(right, -camera.pos.Dot(right)), 
+		float4(up, -camera.pos.Dot(up)), 
+		float4(-forward, camera.pos.Dot(forward)),
+		float4(0.f,0.f,0.f, 1)
+		);
+
 	viewMatrix.Transpose();
 	return viewMatrix;
 }
 
 float4x4 ModuleCamera::GetViewMatrix() const
 {
+	if (orbiting) return GetLookAtMatrix();
+
 	return camera.ViewMatrix();
 }
 

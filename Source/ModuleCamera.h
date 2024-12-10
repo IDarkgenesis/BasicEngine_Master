@@ -47,7 +47,7 @@ public:
 private:
 	Frustum camera;
 
-	float3 target;
+	float3 target = float3::zero;
 
 	const float maximumPositivePitch = 89.f * (PI / 180.f);
 	const float maximumNegativePitch = -89.f * (PI / 180.f);
@@ -60,6 +60,8 @@ private:
 	float mouseSensitivity = 0.5f;
 	
 	float currentPitchAngle = 0.f;
+
+	bool orbiting = false;
 
 	void RotateYaw(float deltaAngle);
 	void RotatePitch(float deltaAngle);
