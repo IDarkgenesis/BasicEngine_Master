@@ -57,7 +57,7 @@ private:
 
 	float cameraMoveSpeed = 7.5f;
 	float cameraRotationAngle = 135.f * DEGTORAD;
-	float mouseSensitivity = 0.3f;
+	float mouseSensitivity = 0.5f;
 	
 	float currentPitchAngle = 0.f;
 
