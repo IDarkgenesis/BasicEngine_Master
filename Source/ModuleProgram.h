@@ -9,11 +9,13 @@ public:
 
 	~ModuleProgram();
 
+	unsigned int LoadShaders(const char* vertexPath, const char* fragmentPath);
+
 	char* LoadShaderSource(const char* shaderPath);
 
-	unsigned CompileShader(unsigned shaderType, const char* source);
+	unsigned int CompileShader(unsigned shaderType, const char* source);
 
-	unsigned CreateProgram(unsigned vertexShader, unsigned fragmentShader);
+	unsigned int CreateProgram(unsigned vertexShader, unsigned fragmentShader);
 
 };
 

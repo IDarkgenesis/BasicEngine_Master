@@ -19,23 +19,10 @@ ModuleRenderExercise::~ModuleRenderExercise()
 bool ModuleRenderExercise::Init()
 {
 	// Creating shaders and program
-	char* vertexShader = App->GetProgramModule()->LoadShaderSource("./RenderExercise/VertexShader.glsl");
-	char* fragmentShader = App->GetProgramModule()->LoadShaderSource("./RenderExercise/FragmentShader.glsl");
-
-	unsigned vertexId = App->GetProgramModule()->CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned fragmentId = App->GetProgramModule()->CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-	program = App->GetProgramModule()->CreateProgram(vertexId, fragmentId);
-
-	free(vertexShader);
-	free(fragmentShader);
+	program = App->GetProgramModule()->LoadShaders("./RenderExercise/VertexShader.glsl", "./RenderExercise/FragmentShader.glsl");
 
 	// Texture loading
 	auto baboonPath = L"./RenderExercise/baboon.ppm";
-	DirectX::TexMetadata metadata;
-	DirectX::ScratchImage image;
-	OpenGLMetadata openGlMeta;
-
 	baboonTexture = App->GetTextureModule()->LoadTexture(baboonPath);
 	// Creating VBO for triangle
 	

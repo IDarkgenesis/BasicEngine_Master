@@ -58,21 +58,21 @@ void EngineModel::Load(const char* modelPath)
 
 			if (currentNode.rotation.size() > 0)
 			{
-				rotationX = float4x4::RotateX(currentNode.rotation[0]);
-				rotationY = float4x4::RotateX(currentNode.rotation[1]);
-				rotationZ = float4x4::RotateX(currentNode.rotation[2]);
+				rotationX = float4x4::RotateX((float)currentNode.rotation[0]);
+				rotationY = float4x4::RotateX((float)currentNode.rotation[1]);
+				rotationZ = float4x4::RotateX((float)currentNode.rotation[2]);
 
 				finalRotation = rotationX * rotationY * rotationZ;
 			}
 
 			if (currentNode.translation.size() > 0)
 			{
-				translation = float3(currentNode.translation[0], currentNode.translation[1], currentNode.translation[2]);
+				translation = float3((float)currentNode.translation[0], (float)currentNode.translation[1], (float)currentNode.translation[2]);
 			}
 
 			if (currentNode.scale.size() > 0)
 			{
-				scale = float3(currentNode.scale[0], currentNode.scale[1], currentNode.scale[2]);
+				scale = float3((float)currentNode.scale[0], (float)currentNode.scale[1], (float)currentNode.scale[2]);
 			}
 
 			float4x4 basicModelMatrix = float4x4::FromTRS(

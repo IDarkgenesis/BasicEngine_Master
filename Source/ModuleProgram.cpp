@@ -11,6 +11,24 @@ ModuleProgram::~ModuleProgram()
 {
 }
 
+unsigned int ModuleProgram::LoadShaders(const char* vertexPath, const char* fragmentPath)
+{
+	unsigned int program = 0;
+
+	char* vertexShader = LoadShaderSource(vertexPath);
+	char* fragmentShader = LoadShaderSource(fragmentPath);
+
+	unsigned int vertexId = CompileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fragmentId = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+	program = CreateProgram(vertexId, fragmentId);
+
+	free(vertexShader);
+	free(fragmentShader);
+
+	return program;
+}
+
 char* ModuleProgram::LoadShaderSource(const char* shaderPath)
 {
 	char* data = nullptr;
@@ -31,7 +49,7 @@ char* ModuleProgram::LoadShaderSource(const char* shaderPath)
 	return data;
 }
 
-unsigned ModuleProgram::CompileShader(unsigned shaderType, const char* source)
+unsigned int ModuleProgram::CompileShader(unsigned shaderType, const char* source)
 {
 
 	unsigned shaderId = glCreateShader(shaderType);
@@ -58,7 +76,7 @@ unsigned ModuleProgram::CompileShader(unsigned shaderType, const char* source)
 	return shaderId;
 }
 
-unsigned ModuleProgram::CreateProgram(unsigned vertexShader, unsigned fragmentShader)
+unsigned int ModuleProgram::CreateProgram(unsigned vertexShader, unsigned fragmentShader)
 {
 	unsigned programId = glCreateProgram();
 	glAttachShader(programId, vertexShader);
