@@ -89,6 +89,26 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
         sprintf_s(title, 25, "Milliseconds %0.1f", frametime[currentPlotData]);
         ImGui::PlotHistogram("##milliseconds", &frametime[0], (int)frametime.size(), currentPlotData, title, 0.f, 40.f, ImVec2(310, 100));
+
+        ImGui::Separator();
+
+        ImGui::Text("Hardware");
+
+        ImGui::Separator();
+
+        // Displaying cpu info
+        char info[25];
+        sprintf_s(title, 25, "CPUs: ");
+        sprintf_s(info, 25, "%i (Cache: %i kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        // Ram data 
+        sprintf_s(title, 25, "System RAM: ");
+        float systemRAM = SDL_GetSystemRAM() / 1000.f;
+        sprintf_s(info, 25, "%.1f GB", systemRAM);
+
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
     }
 
     if (ImGui::CollapsingHeader("Window"))
@@ -101,7 +121,7 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
         ImGui::Separator();
 
-        // Size sliders
+        // Resize sliders
         SDL_DisplayMode displayMode;
         SDL_GetDesktopDisplayMode(0, &displayMode);
 

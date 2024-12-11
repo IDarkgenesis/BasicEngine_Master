@@ -123,12 +123,7 @@ update_status ModuleCamera::Update(float deltaTime)
 		RotateYaw(deltaRotationAngle);
 	}
 
-	// Zoom in out
-	int mouseWheel = inputModule->GetMouseWheel();
-	if (mouseWheel)
-	{
-		camera.pos += (mouseWheel * zoomSensitivity) * finalCameraSpeed * camera.front;
-	}
+	
 	
 
 	
@@ -203,6 +198,13 @@ update_status ModuleCamera::Update(float deltaTime)
 		
 		if (qKeyPressed) camera.pos += finalCameraSpeed * float3::unitY;
 		if (eKeyPressed) camera.pos -= finalCameraSpeed * float3::unitY;
+
+		// Zoom in out
+		int mouseWheel = inputModule->GetMouseWheel();
+		if (mouseWheel)
+		{
+			camera.pos += (mouseWheel * zoomSensitivity) * finalCameraSpeed * camera.front;
+		}
 	}
 	
 
