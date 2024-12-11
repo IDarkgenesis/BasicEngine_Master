@@ -43,29 +43,17 @@ update_status ModuleCamera::Update(float deltaTime)
 {
 	ModuleInput* inputModule = App->GetInputModule();
 
-	
-	
-	if(inputModule == nullptr) return UPDATE_CONTINUE;
+
+
+	if (inputModule == nullptr) return UPDATE_CONTINUE;
 
 	// Changing camera speed based on SHIFT key press
 	bool shiftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LSHIFT) == KeyState::KEY_REPEAT;
 	float finalCameraSpeed = shiftKeyPressed ? cameraMoveSpeed * deltaTime * 2.f * movementScaleFactor : cameraMoveSpeed * deltaTime * movementScaleFactor;
-	
+
 	// Focus the scene object
 	bool fKeyPressed = inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_F) == KeyState::KEY_REPEAT;
-	if (fKeyPressed)
-	{
-		float3 maxModelValues = App->GetModelViewerModule()->GetModelMaximumValues();
-		float3 minModelValues = App->GetModelViewerModule()->GetModelMinimumValues();
-
-		camera.pos = float3(maxModelValues.x / 2.f, maxModelValues.y / 2.f, maxModelValues.z * 5.f);
-		camera.front = -float3::unitZ;
-		camera.up = float3::unitY;
-		camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
-		movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
-
-		currentPitchAngle = 0;
-	}
+	if (fKeyPressed) FocusGeometry();
 
 	// Orbiting camera
 	bool leftClick = inputModule->GetMouseButtonDown(SDL_BUTTON_LEFT);
@@ -99,13 +87,13 @@ update_status ModuleCamera::Update(float deltaTime)
 			RotateOrbitPitch(-angleY);
 		}
 	}
-	
+
 	// Allow camera rotation with arrow keys
 	bool rgihtKeyPressed = inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_REPEAT;
 	bool leftKeyPressed = inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LEFT) == KeyState::KEY_REPEAT;
 	bool upKeyPressed = inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_UP) == KeyState::KEY_REPEAT;
 	bool downKeyPressed = inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_DOWN) == KeyState::KEY_REPEAT;
-	
+
 	float deltaRotationAngle = cameraRotationAngle * deltaTime;
 	// Down Pitch Rotation
 	if (downKeyPressed && (currentPitchAngle + deltaRotationAngle) < maximumPositivePitch)
@@ -134,6 +122,14 @@ update_status ModuleCamera::Update(float deltaTime)
 	{
 		RotateYaw(deltaRotationAngle);
 	}
+
+	// Zoom in out
+	int mouseWheel = inputModule->GetMouseWheel();
+	if (mouseWheel)
+	{
+		camera.pos += (mouseWheel * zoomSensitivity) * finalCameraSpeed * camera.front;
+	}
+	
 
 	
 	// Allow camera movement and rotation if mouse right click
@@ -217,6 +213,20 @@ update_status ModuleCamera::Update(float deltaTime)
 bool ModuleCamera::CleanUp()
 {
 	return false;
+}
+
+void ModuleCamera::FocusGeometry()
+{
+	float3 maxModelValues = App->GetModelViewerModule()->GetModelMaximumValues();
+	float3 minModelValues = App->GetModelViewerModule()->GetModelMinimumValues();
+
+	camera.pos = float3(maxModelValues.x / 2.f, maxModelValues.y / 2.f, maxModelValues.z * 5.f);
+	camera.front = -float3::unitZ;
+	camera.up = float3::unitY;
+	camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
+	movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
+
+	currentPitchAngle = 0;
 }
 
 float4x4 ModuleCamera::GetLookAtMatrix(const float3& cameraPosition, const float3& targetPosition, const float3& upVector)

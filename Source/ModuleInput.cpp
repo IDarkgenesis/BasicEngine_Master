@@ -46,6 +46,7 @@ update_status ModuleInput::PreUpdate()
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
+	mouseWheel = 0;
 	
 	for (int i = 0; i < MAX_KEYS; ++i)
 	{
@@ -104,6 +105,9 @@ update_status ModuleInput::PreUpdate()
 
 			mouse.x = sdlEvent.motion.x / 2.f;
 			mouse.y = sdlEvent.motion.y / 2.f;
+			break;
+		case SDL_MOUSEWHEEL:
+			mouseWheel = sdlEvent.wheel.y;
 			break;
 		}
 	}

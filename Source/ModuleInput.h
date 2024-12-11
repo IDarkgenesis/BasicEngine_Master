@@ -45,9 +45,12 @@ public:
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
 
+	int GetMouseWheel() const { return mouseWheel; }
+
 private:
 	KeyState* keyboard = NULL;
 	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
 	float2 mouse_motion;
 	float2 mouse;
+	int mouseWheel = 0;
 };

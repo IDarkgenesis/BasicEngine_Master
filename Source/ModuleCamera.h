@@ -29,6 +29,8 @@ public:
 	update_status Update(float deltaTime) override;
 	bool CleanUp() override;
 
+	void FocusGeometry();
+
 	static float4x4 GetLookAtMatrix(const float3& cameraPosition, const float3& targetPosition, const float3& upVector);
 	float4x4 GetLookAtMatrix(const float3& targetPosition) const;
 	float4x4 GetLookAtMatrix() const;
@@ -49,15 +51,16 @@ private:
 
 	float3 target = float3::zero;
 
-	const float maximumPositivePitch = 89.f * (PI / 180.f);
-	const float maximumNegativePitch = -89.f * (PI / 180.f);
 	const float DEGTORAD = PI / 180.f;
+	const float maximumPositivePitch = 89.f * DEGTORAD;
+	const float maximumNegativePitch = -89.f * DEGTORAD;
 
 	float movementScaleFactor = 1.f;
 
 	float cameraMoveSpeed = 7.5f;
 	float cameraRotationAngle = 135.f * DEGTORAD;
 	float mouseSensitivity = 0.5f;
+	float zoomSensitivity = 5.f;
 	
 	float currentPitchAngle = 0.f;
 

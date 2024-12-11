@@ -64,4 +64,6 @@ void ModuleModelViewer::LoadModel(const char* path)
     float3 boundingBoxCenter = maximumValues / 2.f;
 
     App->GetCameraModule()->SetCameraTarget(boundingBoxCenter);
+
+    App->GetCameraModule()->FocusGeometry();
 }
