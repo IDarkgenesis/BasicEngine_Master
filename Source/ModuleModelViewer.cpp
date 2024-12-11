@@ -21,8 +21,7 @@ bool ModuleModelViewer::Init()
     programTextures = App->GetProgramModule()->LoadShaders("./RenderExercise/VertexShader.glsl", "./RenderExercise/FragmentShader.glsl");
 
     // LOADING HOUSE MODEL
-    currentLoadedModel->Load("../../ModelsTextures/BakerHouse.gltf");
-	
+    LoadModel("../../ModelsTextures/BakerHouse.gltf");
     return true;
 }
 
@@ -54,4 +53,15 @@ float3 ModuleModelViewer::GetModelMaximumValues() const
 float3 ModuleModelViewer::GetModelMinimumValues() const
 {
     return currentLoadedModel->GetMinimumValues();
+}
+
+void ModuleModelViewer::LoadModel(const char* path)
+{
+    currentLoadedModel->Load("../../ModelsTextures/BakerHouse.gltf");
+
+    float3 maximumValues = currentLoadedModel->GetMaximumValues();
+
+    float3 boundingBoxCenter = maximumValues / 2.f;
+
+    App->GetCameraModule()->SetCameraTarget(boundingBoxCenter);
 }

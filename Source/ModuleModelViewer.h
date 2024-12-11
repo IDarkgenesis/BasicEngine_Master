@@ -19,6 +19,8 @@ public:
 		float3 GetModelMaximumValues() const;
 		float3 GetModelMinimumValues() const;
 
+		void LoadModel(const char* path);
+
 private:
 	unsigned int programTextures = 0;
 

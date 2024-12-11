@@ -99,10 +99,9 @@ update_status ModuleInput::PreUpdate()
 			mouse_buttons[sdlEvent.button.button - 1] = KEY_UP;
 			break;
 		case SDL_MOUSEMOTION:
-			if (GetMouseButtonDown(SDL_BUTTON_RIGHT) == KeyState::KEY_REPEAT) {
-				mouse_motion.x = sdlEvent.motion.xrel / 2.f;
-				mouse_motion.y = sdlEvent.motion.yrel / 2.f;
-			}
+			mouse_motion.x = sdlEvent.motion.xrel / 2.f;
+			mouse_motion.y = sdlEvent.motion.yrel / 2.f;
+
 			mouse.x = sdlEvent.motion.x / 2.f;
 			mouse.y = sdlEvent.motion.y / 2.f;
 			break;

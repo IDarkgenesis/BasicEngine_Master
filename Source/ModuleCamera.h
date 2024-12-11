@@ -61,10 +61,10 @@ private:
 	
 	float currentPitchAngle = 0.f;
 
-	bool orbiting = false;
-
 	void RotateYaw(float deltaAngle);
 	void RotatePitch(float deltaAngle);
+	void RotateOrbitYaw(float deltaAngle, const float3& rotateFromVector);
+	void RotateOrbitPitch(float deltaAngle);
 	WASD_Direction GetWasdDirection();
 };
 

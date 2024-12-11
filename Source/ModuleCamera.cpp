@@ -63,23 +63,42 @@ update_status ModuleCamera::Update(float deltaTime)
 		camera.up = float3::unitY;
 		camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
 		movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
+
+		currentPitchAngle = 0;
 	}
 
 	// Orbiting camera
-	// TODO: Try rotating camera position through world Y axis and use look at matrix with center of geometry bounding box as target
 	bool leftClick = inputModule->GetMouseButtonDown(SDL_BUTTON_LEFT);
 	bool lAltKeyPressed = inputModule->GetKey(SDL_SCANCODE_LALT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_LALT) == KeyState::KEY_REPEAT;
 	if (leftClick && lAltKeyPressed)
 	{
-		orbiting = !orbiting;
-	}
+		const float2 mouseMotion = inputModule->GetMouseMotion();
+		float angleX, angleY;
 
-	if (orbiting)
-	{
-		camera.pos = float3x3::RotateY(cameraRotationAngle * deltaTime).MulPos(camera.pos);
-		return UPDATE_CONTINUE;
+		angleY = mouseMotion.y * DEGTORAD * mouseSensitivity;
+		angleX = mouseMotion.x * DEGTORAD * mouseSensitivity;
+
+		float3 maxModelValues = App->GetModelViewerModule()->GetModelMaximumValues();
+		float3 minModelValues = App->GetModelViewerModule()->GetModelMinimumValues();
+
+		float3 yawRotateVector = (float3(target.x, maxModelValues.y, target.z) - target).Normalized();
+
+		if (angleX)
+		{
+			RotateOrbitYaw(-angleX, yawRotateVector);
+		}
+
+		if (angleY > 0 && (currentPitchAngle - angleY) > maximumNegativePitch)
+		{
+			currentPitchAngle -= angleY;
+			RotateOrbitPitch(-angleY);
+		}
+		else if (angleY < 0 && (currentPitchAngle - angleY) < maximumPositivePitch)
+		{
+			currentPitchAngle -= angleY;
+			RotateOrbitPitch(-angleY);
+		}
 	}
-	
 	
 	// Allow camera rotation with arrow keys
 	bool rgihtKeyPressed = inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_DOWN || inputModule->GetKey(SDL_SCANCODE_RIGHT) == KeyState::KEY_REPEAT;
@@ -256,8 +275,6 @@ float4x4 ModuleCamera::GetLookAtMatrix() const
 
 float4x4 ModuleCamera::GetViewMatrix() const
 {
-	if (orbiting) return GetLookAtMatrix();
-
 	return camera.ViewMatrix();
 }
 
@@ -332,6 +349,43 @@ void ModuleCamera::RotatePitch(float deltaAngle)
 	float theta = deltaAngle / 2.f;
 
 	Quat quatRotator = Quat(right.x * sinf(theta), right.y * sinf(theta), right.z * sinf(theta), cosf(theta));
+
+	float3 oldFront = camera.front.Normalized();
+	camera.front = quatRotator.Mul(oldFront);
+
+	float3 oldUp = camera.up.Normalized();
+	camera.up = quatRotator.Mul(oldUp);
+}
+
+void ModuleCamera::RotateOrbitYaw(float deltaAngle, const float3& rotateFromVector)
+{
+	float3 rotateNormalized = rotateFromVector.Normalized();
+
+	float theta = deltaAngle / 2.f;
+	Quat quatRotator = Quat(rotateNormalized.x * sinf(theta), rotateNormalized.y * sinf(theta), rotateNormalized.z * sinf(theta), cosf(theta));
+
+	float3 oldCameraPos = camera.pos;
+	camera.pos = quatRotator.Mul(oldCameraPos);
+
+	float3 oldUp = camera.up;
+	camera.up = quatRotator.Mul(oldUp);
+
+	float3 oldFront = camera.front;
+	camera.front = quatRotator.Mul(oldFront);
+}
+
+void ModuleCamera::RotateOrbitPitch(float deltaAngle)
+{
+	float3 normFront = camera.front.Normalized();
+	float3 normUp = camera.up.Normalized();
+
+	float3 right = normFront.Cross(normUp).Normalized();
+	float theta = deltaAngle / 2.f;
+
+	Quat quatRotator = Quat(right.x * sinf(theta), right.y * sinf(theta), right.z * sinf(theta), cosf(theta));
+
+	float3 oldCameraPos = camera.pos;
+	camera.pos = quatRotator.Mul(oldCameraPos);
 
 	float3 oldFront = camera.front.Normalized();
 	camera.front = quatRotator.Mul(oldFront);
