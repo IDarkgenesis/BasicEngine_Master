@@ -7,6 +7,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleEditor.h"
+#include "ModuleModelViewer.h"
 
 
 #define MAX_KEYS 300
@@ -109,6 +110,13 @@ update_status ModuleInput::PreUpdate()
 		case SDL_MOUSEWHEEL:
 			mouseWheel = sdlEvent.wheel.y;
 			break;
+		case SDL_DROPFILE:
+			std::string filePath = std::string(sdlEvent.drop.file);
+			int fileExtensionPosition = (int)filePath.find_last_of('.');
+
+			std::string fileExtension = filePath.substr(fileExtensionPosition, filePath.length());
+			if (fileExtension == ".ppm" || fileExtension == ".png" || fileExtension == ".jpg") App->GetModelViewerModule()->LoadTexture(filePath.c_str());
+			else if(fileExtension == ".gltf") App->GetModelViewerModule()->LoadModel(filePath.c_str());
 		}
 	}
 

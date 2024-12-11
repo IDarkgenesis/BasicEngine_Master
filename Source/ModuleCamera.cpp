@@ -220,11 +220,16 @@ void ModuleCamera::FocusGeometry()
 	float3 maxModelValues = App->GetModelViewerModule()->GetModelMaximumValues();
 	float3 minModelValues = App->GetModelViewerModule()->GetModelMinimumValues();
 
-	camera.pos = float3(maxModelValues.x / 2.f, maxModelValues.y / 2.f, maxModelValues.z * 5.f);
+	float zPosition = maxModelValues.z ? maxModelValues.z * 5.f : 5.f;
+
+	camera.pos = float3(maxModelValues.x / 2.f, maxModelValues.y / 2.f, zPosition);
 	camera.front = -float3::unitZ;
 	camera.up = float3::unitY;
-	camera.nearPlaneDistance = abs(camera.pos.z / 10.f);
-	movementScaleFactor = (maxModelValues - minModelValues).Length() / 5.f;
+	
+	float nearDisctance = abs(camera.pos.z / 10.f);
+	camera.nearPlaneDistance = nearDisctance? nearDisctance : 0.1f;
+	
+	movementScaleFactor = zPosition / 7.f;
 
 	currentPitchAngle = 0;
 }

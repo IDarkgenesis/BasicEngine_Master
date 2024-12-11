@@ -20,6 +20,8 @@ public:
 	void Load(const char* modelPath);
 	void LoadMaterials(const tinygltf::Model& sourceModel, const char* modelPath);
 
+	void LoadAdditionalTexture(const char* texturePath);
+
 	void Render(int program, float4x4& projectionMatrix, float4x4& viewMatrix);
 
 	float3 GetMaximumValues() const { return maxValues; };
@@ -33,5 +35,6 @@ private:
 	float3 maxValues;
 	float3 minValues;
 
+	void ClearVectors();
 };
 

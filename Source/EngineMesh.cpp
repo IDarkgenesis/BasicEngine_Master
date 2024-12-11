@@ -22,6 +22,8 @@ EngineMesh::EngineMesh()
 EngineMesh::~EngineMesh()
 {
 	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ebo);
+	glDeleteBuffers(1, &vao);
 }
 
 void EngineMesh::LoadVBO(const tinygltf::Model& inModel, const tinygltf::Mesh& inMesh, const tinygltf::Primitive& inPrimitive)

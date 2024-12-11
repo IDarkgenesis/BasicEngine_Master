@@ -57,7 +57,7 @@ float3 ModuleModelViewer::GetModelMinimumValues() const
 
 void ModuleModelViewer::LoadModel(const char* path)
 {
-    currentLoadedModel->Load("../../ModelsTextures/BakerHouse.gltf");
+    currentLoadedModel->Load(path);
 
     float3 maximumValues = currentLoadedModel->GetMaximumValues();
 
@@ -66,4 +66,9 @@ void ModuleModelViewer::LoadModel(const char* path)
     App->GetCameraModule()->SetCameraTarget(boundingBoxCenter);
 
     App->GetCameraModule()->FocusGeometry();
+}
+
+void ModuleModelViewer::LoadTexture(const char* path)
+{
+    currentLoadedModel->LoadAdditionalTexture(path);
 }

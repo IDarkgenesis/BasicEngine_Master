@@ -31,7 +31,6 @@ private:
 	unsigned int vbo = 0;
 	unsigned int ebo = 0;
 	unsigned int vao = 0;
-	unsigned int material = 0;
 
 	int vertexCount = 0;
 	int textureCoordCount = 0;

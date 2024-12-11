@@ -21,14 +21,13 @@ EngineModel::EngineModel()
 
 EngineModel::~EngineModel()
 {
-	for (auto it : meshes)
-	{
-		delete it;
-	}
+	ClearVectors();
 }
 
 void EngineModel::Load(const char* modelPath)
 {
+	ClearVectors();
+
 	GLOG("Loading: %s", modelPath);
 
 	tinygltf::TinyGLTF gltfContext;
@@ -46,7 +45,7 @@ void EngineModel::Load(const char* modelPath)
 
 	for (tinygltf::Node currentNode : model.nodes)
 	{
-		if (currentNode.name != "RootNode")
+		if (currentNode.name != "RootNode" && currentNode.mesh >= 0)
 		{
 			// Creating basic model transform matrix based on node information
 			float4x4 rotationX, rotationY, rotationZ, finalRotation;
@@ -123,17 +122,23 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			const tinygltf::Texture& texture = sourceModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
 			const tinygltf::Image& image = sourceModel.images[texture.source];
 
-			// Removing file name from path to get the texture
-			std::string stringPath = std::string(modelPath);
-			int charsToIgnore = 0;
-			auto pathIterator = stringPath.end();
-
-			while (pathIterator-- != stringPath.begin() && *pathIterator != '/')
+			std::string filePath = std::string(modelPath);
+			char usedSeparator = '\\';
+			
+			int fileLocationPosition = (int)filePath.find_last_of(usedSeparator);
+			
+			if (fileLocationPosition == -1)
 			{
-				++charsToIgnore;
+				usedSeparator = '/';
+				fileLocationPosition = filePath.find_last_of(usedSeparator);
 			}
+				
+			// Cant find the directory of the file
+			if(fileLocationPosition == -1) return;
 
-			std::string texturePathString = stringPath.substr(0, stringPath.length() - charsToIgnore).append(image.uri);
+			std::string fileLocation = filePath.substr(0, fileLocationPosition) + usedSeparator;
+
+			std::string texturePathString = fileLocation.append(image.uri);
 
 			std::wstring wideUri = std::wstring(texturePathString.begin(), texturePathString.end());
 			const wchar_t* texturePath = wideUri.c_str();
@@ -144,11 +149,38 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 	}
 }
 
+void EngineModel::LoadAdditionalTexture(const char* texturePath)
+{
+	std::string stringPath = std::string(texturePath);
+	std::wstring widePath = std::wstring(stringPath.begin(), stringPath.end());
+	const wchar_t* wideTexturePath = widePath.c_str();
+
+	unsigned int textureId = App->GetTextureModule()->LoadTexture(wideTexturePath);
+
+	if (textureId) textures.push_back(textureId);
+}
+
 void EngineModel::Render(int program, float4x4& projectionMatrix, float4x4& viewMatrix)
 {
 	for (EngineMesh* currentMesh : meshes)
 	{
-		int texturePostiion = textures.size() > 0 ? textures[0] : 0;
+		int texturePostiion = textures.size() > 0 ? textures[textures.size()-1] : 0;
 		currentMesh->Render(program, texturePostiion, projectionMatrix, viewMatrix);
 	}
+}
+
+void EngineModel::ClearVectors()
+{
+	for (auto it : meshes)
+	{
+		delete it;
+	}
+
+	for (unsigned int textureId : textures)
+	{
+		glDeleteTextures(1, &textureId);
+	}
+
+	meshes.clear();
+	textures.clear();
 }

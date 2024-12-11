@@ -20,6 +20,7 @@ public:
 		float3 GetModelMinimumValues() const;
 
 		void LoadModel(const char* path);
+		void LoadTexture(const char* path);
 
 private:
 	unsigned int programTextures = 0;
