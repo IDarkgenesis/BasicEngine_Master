@@ -345,6 +345,26 @@ void ModuleCamera::SetCameraTarget(const float3& newTarget)
 	target = newTarget;
 }
 
+void ModuleCamera::SetMoveMentScaleFactor(float newMovementSacle)
+{
+	movementScaleFactor = newMovementSacle;
+}
+
+void ModuleCamera::SetCameraMoveSpeed(float newCameraMoveSpeed)
+{
+	cameraMoveSpeed = newCameraMoveSpeed;
+}
+
+void ModuleCamera::SetMouseSensitivity(float newMouseSensitivity)
+{
+	mouseSensitivity = newMouseSensitivity;
+}
+
+void ModuleCamera::SetZoomSensitivity(float newZoomSensitivity)
+{
+	zoomSensitivity = newZoomSensitivity;
+}
+
 void ModuleCamera::RotateYaw(float deltaAngle)
 {
 	float theta = deltaAngle / 2.f;

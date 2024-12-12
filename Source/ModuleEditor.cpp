@@ -229,6 +229,67 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         if (disableSlider) ImGui::EndDisabled();
     }
 
+    if (ImGui::CollapsingHeader("Camera"))
+    {
+        ModuleCamera* cameraModule = App->GetCameraModule();
+
+        float movementScaleFactor = cameraModule->GetMoveMentScaleFactor();
+        float cameraMoveSpeed = cameraModule->GetCameraMoveSpeed();
+        float mouseSens = cameraModule->GetMouseSensitivity();
+        float zoomSens = cameraModule->GetZoomSensitivity();
+
+        // Movement Sacle Factor
+        if (ImGui::SliderFloat("Movement Scale Factor", &movementScaleFactor, 0.1f, 5.f)) cameraModule->SetMoveMentScaleFactor(movementScaleFactor);
+        if (ImGui::Button("Reset Scale"))
+        {
+            movementScaleFactor = DEFAULT_CAMERA_MOVEMENT_SCALE_FACTOR;
+            cameraModule->SetMoveMentScaleFactor(movementScaleFactor);
+        }
+
+        ImGui::Separator();
+
+        // Camera Move Speed
+        if (ImGui::SliderFloat("Camera Move Speed", &cameraMoveSpeed, 0.1f, 100.f)) cameraModule->SetCameraMoveSpeed(cameraMoveSpeed);
+        if (ImGui::Button("Reset Move Speed"))
+        {
+            cameraMoveSpeed = DEFAULT_CAMERA_MOVMENT_SPEED;
+            cameraModule->SetCameraMoveSpeed(cameraMoveSpeed);
+        }
+
+        ImGui::Separator();
+
+        // Mouse sensitivity
+        if (ImGui::SliderFloat("Mouse Sensitivity", &mouseSens, 0.1f, 1.f)) cameraModule->SetMouseSensitivity(mouseSens);
+        if (ImGui::Button("Reset Mouse Sens"))
+        {
+            mouseSens = DEFAULT_CAMERA_MOUSE_SENSITIVITY;
+            cameraModule->SetMouseSensitivity(mouseSens);
+        }
+
+        ImGui::Separator();
+
+        // Zoom Sensitivity
+        if (ImGui::SliderFloat("Zoom Sensitivity", &zoomSens, 0.1f, 100.f)) cameraModule->SetZoomSensitivity(zoomSens);
+        if (ImGui::Button("Reset Zoom Sens"))
+        {
+            zoomSens = DEFAUL_CAMERA_ZOOM_SENSITIVITY;
+            cameraModule->SetZoomSensitivity(zoomSens);
+        }
+
+        if (ImGui::Button("Reset Values"))
+        {
+            movementScaleFactor = DEFAULT_CAMERA_MOVEMENT_SCALE_FACTOR;
+            cameraMoveSpeed = DEFAULT_CAMERA_MOVMENT_SPEED;
+            mouseSens = DEFAULT_CAMERA_MOUSE_SENSITIVITY;
+            zoomSens = DEFAUL_CAMERA_ZOOM_SENSITIVITY;
+
+            cameraModule->SetMoveMentScaleFactor(movementScaleFactor);
+            cameraModule->SetCameraMoveSpeed(cameraMoveSpeed);
+            cameraModule->SetMouseSensitivity(mouseSens);
+            cameraModule->SetZoomSensitivity(zoomSens);
+        }
+    }
+
     ImGui::Separator();
 
     if (ImGui::Button("Close Me")) configMenu = false;
