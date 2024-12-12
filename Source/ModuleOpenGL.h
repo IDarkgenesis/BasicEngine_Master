@@ -22,6 +22,14 @@ public:
 
 	void* GetContext() { return context; }
 
+	void SetClearRed(float newValue);
+	void SetClearGreen(float newValue);
+	void SetClearBlue(float newValue);
+
 private:
 	void* context;
+
+	float clearColorRed = DEFAULT_GL_CLEAR_COLOR_RED;
+	float clearColorGreen = DEFAULT_GL_CLEAR_COLOR_GREEN;
+	float clearColorBlue = DEFAULT_GL_CLEAR_COLOR_BLUE;
 };

@@ -34,6 +34,15 @@ private:
 	bool fullDesktop = false;
 	bool borderless = false;
 
+	// OpenGL Variables
+	bool backFaceCulling = true;
+	bool CCW_Face = true;
+	bool depthTest = true;
+
+	float clearRed = 0.5f;
+	float clearGreen = 0.5f;
+	float clearBlue = 0.5f;
+
 	int maximumPlotData = 50;
 	int currentPlotData = 0;
 	std::vector<float> framerate;

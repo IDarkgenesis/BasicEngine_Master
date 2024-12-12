@@ -35,3 +35,6 @@ enum update_status
 #define VSYNC true
 #define TITLE "Super Awesome Engine"
 #define HFOV 90
+#define DEFAULT_GL_CLEAR_COLOR_RED 0.5f
+#define DEFAULT_GL_CLEAR_COLOR_GREEN 0.5f
+#define DEFAULT_GL_CLEAR_COLOR_BLUE 0.5f

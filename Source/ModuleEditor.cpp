@@ -7,6 +7,9 @@
 #include "ModuleWindow.h"
 #include "ModuleOpenGL.h"
 #include "ModuleCamera.h"
+#include "GL/glew.h"
+#include "Windows.h"
+#include "psapi.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -97,18 +100,19 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         ImGui::Separator();
 
         // Displaying cpu info
-        char info[25];
+        char info[256];
         sprintf_s(title, 25, "CPUs: ");
-        sprintf_s(info, 25, "%i (Cache: %i kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+        sprintf_s(info, 256, "%i (Cache: %i kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
 
         ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
 
         // Ram data 
         sprintf_s(title, 25, "System RAM: ");
         float systemRAM = SDL_GetSystemRAM() / 1000.f;
-        sprintf_s(info, 25, "%.1f GB", systemRAM);
+        sprintf_s(info, 256, "%.1f GB", systemRAM);
 
         ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
     }
 
     if (ImGui::CollapsingHeader("Window"))
@@ -165,6 +169,48 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
             Uint32 flag = fullDesktop ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0;
             fullscreen = false;
             App->GetWindowModule()->SetWindowFullscreen(flag);
+        }
+    }
+
+    if (ImGui::CollapsingHeader("OpenGL"))
+    {
+        if (ImGui::SliderFloat("Red Clear Color", &clearRed, 0.f, 1.f)) App->GetOpenGLModule()->SetClearRed(clearRed);
+        if (ImGui::SliderFloat("Green Clear Color", &clearGreen, 0.f, 1.f)) App->GetOpenGLModule()->SetClearGreen(clearGreen);
+        if (ImGui::SliderFloat("Blue Clear Color", &clearBlue, 0.f, 1.f)) App->GetOpenGLModule()->SetClearBlue(clearBlue);
+
+        if (ImGui::Button("Reset Colors"))
+        {
+            clearRed = DEFAULT_GL_CLEAR_COLOR_RED;
+            clearGreen = DEFAULT_GL_CLEAR_COLOR_GREEN;
+            clearBlue = DEFAULT_GL_CLEAR_COLOR_BLUE;
+
+            App->GetOpenGLModule()->SetClearRed(clearRed);
+            App->GetOpenGLModule()->SetClearGreen(clearGreen);
+            App->GetOpenGLModule()->SetClearBlue(clearBlue);
+        }
+
+        ImGui::Separator();
+
+        if (ImGui::Checkbox("Enable back face culling", &backFaceCulling))
+        {
+            if (backFaceCulling) glEnable(GL_CULL_FACE);
+            else glDisable(GL_CULL_FACE);
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Checkbox("CCW_Faces", &CCW_Face))
+        {
+            if (CCW_Face) glFrontFace(GL_CCW);
+            else glFrontFace(GL_CW);
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Checkbox("Enable depth test", &depthTest))
+        {
+            if (depthTest) glEnable(GL_DEPTH_TEST);
+            else glDisable(GL_DEPTH_TEST);
         }
     }
 

@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include "glew-2.1.0/include/GL/glew.h"
 #include "ModuleCamera.h"
+#include "Windows.h"
 
 
 ModuleOpenGL::ModuleOpenGL()
@@ -56,7 +57,7 @@ update_status ModuleOpenGL::PreUpdate()
 	if (CurrentWidth && CurrentHeight) {
 		glViewport(0,0, CurrentWidth, CurrentHeight);
 
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClearColor(clearColorRed, clearColorGreen, clearColorBlue, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
@@ -96,3 +97,17 @@ void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 	App->GetCameraModule()->SetAspectRatio(aspectRatio);
 }
 
+void ModuleOpenGL::SetClearRed(float newValue)
+{
+	clearColorRed = newValue;
+}
+
+void ModuleOpenGL::SetClearGreen(float newValue)
+{
+	clearColorGreen = newValue;
+}
+
+void ModuleOpenGL::SetClearBlue(float newValue)
+{
+	clearColorBlue = newValue;
+}
