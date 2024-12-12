@@ -72,3 +72,18 @@ void ModuleModelViewer::LoadTexture(const char* path)
 {
     currentLoadedModel->LoadAdditionalTexture(path);
 }
+
+int ModuleModelViewer::GetModelLoadedTextures() const
+{
+    return currentLoadedModel->GetTotalLoadedTextures();
+}
+
+int ModuleModelViewer::GetModelRenderTexture() const
+{
+    return currentLoadedModel->GetRenderTexture();
+}
+
+void ModuleModelViewer::SetModelRenderTexture(int renderTexture)
+{
+    currentLoadedModel->SetRenderTexture(renderTexture);
+}

@@ -22,6 +22,10 @@ public:
 		void LoadModel(const char* path);
 		void LoadTexture(const char* path);
 
+		int GetModelLoadedTextures() const;
+		int GetModelRenderTexture() const;
+		void SetModelRenderTexture(int renderTexture);
+
 private:
 	unsigned int programTextures = 0;
 

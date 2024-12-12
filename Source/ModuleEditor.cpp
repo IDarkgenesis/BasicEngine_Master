@@ -7,6 +7,7 @@
 #include "ModuleWindow.h"
 #include "ModuleOpenGL.h"
 #include "ModuleCamera.h"
+#include "ModuleModelViewer.h"
 #include "GL/glew.h"
 #include "Windows.h"
 #include "psapi.h"
@@ -212,6 +213,20 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
             if (depthTest) glEnable(GL_DEPTH_TEST);
             else glDisable(GL_DEPTH_TEST);
         }
+    }
+
+    if (ImGui::CollapsingHeader("Textures"))
+    {
+        int totalLoadedTextures = App->GetModelViewerModule()->GetModelLoadedTextures();
+        int currentLoadedTexture = App->GetModelViewerModule()->GetModelRenderTexture();
+        currentLoadedTexture = currentLoadedTexture < 0 ? 0 : currentLoadedTexture;
+        bool disableSlider = totalLoadedTextures < 2;
+
+        if (disableSlider) ImGui::BeginDisabled();
+
+        if (ImGui::SliderInt("Select texture to render", &currentLoadedTexture, 0, totalLoadedTextures - 1)) App->GetModelViewerModule()->SetModelRenderTexture(currentLoadedTexture);
+
+        if (disableSlider) ImGui::EndDisabled();
     }
 
     ImGui::Separator();

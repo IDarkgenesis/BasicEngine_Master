@@ -27,10 +27,16 @@ public:
 	float3 GetMaximumValues() const { return maxValues; };
 	float3 GetMinimumValues() const { return minValues; };
 
+	int GetTotalLoadedTextures() const { return textures.size(); };
+	int GetRenderTexture() const { return renderTexture; };
+	void SetRenderTexture(int texturePosition);
+
 private:
 
 	std::vector<EngineMesh*> meshes;
 	std::vector<unsigned int> textures;
+
+	int renderTexture = -1;
 
 	float3 maxValues;
 	float3 minValues;

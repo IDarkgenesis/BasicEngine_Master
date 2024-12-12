@@ -146,6 +146,7 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			textureId = App->GetTextureModule()->LoadTexture(texturePath);
 		}
 		textures.push_back(textureId);
+		renderTexture++;
 	}
 }
 
@@ -157,16 +158,25 @@ void EngineModel::LoadAdditionalTexture(const char* texturePath)
 
 	unsigned int textureId = App->GetTextureModule()->LoadTexture(wideTexturePath);
 
-	if (textureId) textures.push_back(textureId);
+	if (textureId) 
+	{
+		renderTexture++;
+		textures.push_back(textureId);
+	}
 }
 
 void EngineModel::Render(int program, float4x4& projectionMatrix, float4x4& viewMatrix)
 {
 	for (EngineMesh* currentMesh : meshes)
 	{
-		int texturePostiion = textures.size() > 0 ? textures[textures.size()-1] : 0;
+		int texturePostiion = textures.size() > 0 ? renderTexture > -1 ? textures[renderTexture] : textures[textures.size() - 1] : 0;
 		currentMesh->Render(program, texturePostiion, projectionMatrix, viewMatrix);
 	}
+}
+
+void EngineModel::SetRenderTexture(int texturePosition)
+{
+	renderTexture = texturePosition;
 }
 
 void EngineModel::ClearVectors()
@@ -183,4 +193,6 @@ void EngineModel::ClearVectors()
 
 	meshes.clear();
 	textures.clear();
+
+	renderTexture = -1;
 }
