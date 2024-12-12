@@ -61,6 +61,8 @@ update_status ModuleEditor::Update(float deltaTime)
 
     if (currentPlotData >= maximumPlotData) currentPlotData = 0;
 
+    if (closeApplication) return UPDATE_STOP;
+
     return UPDATE_CONTINUE;
 }
 
@@ -293,6 +295,7 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
     ImGui::Separator();
 
     if (ImGui::Button("Close Me")) configMenu = false;
+    ImGui::TextLinkOpenURL("https://github.com/");
 
     ImGui::End();
 }
@@ -332,6 +335,8 @@ void ModuleEditor::Draw()
 
         if (ImGui::MenuItem("Console"))
             consoleMenu = !consoleMenu;
+
+        if (ImGui::MenuItem("Close Application")) closeApplication = true;
 
         ImGui::EndMenu();
     }

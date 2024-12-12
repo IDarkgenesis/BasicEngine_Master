@@ -25,6 +25,8 @@ private:
 	bool configMenu = false;
 	bool consoleMenu = false;
 	
+	bool closeApplication = false;
+
 	// WINDOW VARIABLES
 	int fov = HFOV;
 	int width = SCREEN_WIDTH;
