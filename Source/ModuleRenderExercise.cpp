@@ -22,8 +22,9 @@ bool ModuleRenderExercise::Init()
 	program = App->GetProgramModule()->LoadShaders("./RenderExercise/VertexShader.glsl", "./RenderExercise/FragmentShader.glsl");
 
 	// Texture loading
+	DirectX::TexMetadata textureMetadata;
 	auto baboonPath = L"./RenderExercise/baboon.ppm";
-	baboonTexture = App->GetTextureModule()->LoadTexture(baboonPath);
+	baboonTexture = App->GetTextureModule()->LoadTexture(baboonPath, textureMetadata);
 	// Creating VBO for triangle
 	
 	//float vtx_data[] = { 

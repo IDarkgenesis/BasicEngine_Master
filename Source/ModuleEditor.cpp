@@ -325,7 +325,7 @@ void ModuleEditor::Draw()
     ImGui::NewFrame();
 
     ImGui::BeginMainMenuBar();
-    if (ImGui::BeginMenu("Help!"))
+    if (ImGui::BeginMenu("Menu"))
     {
         if (ImGui::MenuItem("Gui Demo"))
             showcaseMenu = !showcaseMenu;

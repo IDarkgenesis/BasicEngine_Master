@@ -35,6 +35,7 @@ private:
 
 	std::vector<EngineMesh*> meshes;
 	std::vector<unsigned int> textures;
+	std::vector<float2> textureInfo;
 
 	int renderTexture = -1;
 

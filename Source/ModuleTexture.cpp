@@ -10,24 +10,23 @@ ModuleTexture::~ModuleTexture()
 {
 }
 
-unsigned int ModuleTexture::LoadTexture(const wchar_t* texturePath)
+unsigned int ModuleTexture::LoadTexture(const wchar_t* texturePath, DirectX::TexMetadata& outTexMetadata)
 {
 	unsigned int textureId = 0;
 
-	DirectX::TexMetadata metadata;
 	DirectX::ScratchImage scratchImage;
 	OpenGLMetadata openGlMeta;
 
-	bool succeded = LoadTextureFile(texturePath, metadata, scratchImage);
+	bool succeded = LoadTextureFile(texturePath, outTexMetadata, scratchImage);
 	if (succeded)
 	{
-		ConvertMetadata(metadata, openGlMeta);
+		ConvertMetadata(outTexMetadata, openGlMeta);
 
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 
 		// Sending texture to OpgenGL
-		glTexImage2D(GL_TEXTURE_2D, 0, openGlMeta.internalFormat, metadata.width, metadata.height, 0, openGlMeta.format, openGlMeta.type, scratchImage.GetPixels());
+		glTexImage2D(GL_TEXTURE_2D, 0, openGlMeta.internalFormat, outTexMetadata.width, outTexMetadata.height, 0, openGlMeta.format, openGlMeta.type, scratchImage.GetPixels());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}

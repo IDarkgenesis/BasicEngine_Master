@@ -1,6 +1,5 @@
 #pragma once
 #include "Module.h"
-#include "DirectXTex/DirectXTex.h"
 
 struct OpenGLMetadata
 {
@@ -9,13 +8,20 @@ struct OpenGLMetadata
 	unsigned type;
 };
 
+
+namespace DirectX
+{
+	struct TexMetadata;
+	class ScratchImage;
+}
+
 class ModuleTexture : public Module
 {
 public:
 	ModuleTexture();
 	~ModuleTexture();
 
-	unsigned int LoadTexture(const wchar_t* texturePath);
+	unsigned int LoadTexture(const wchar_t* texturePath, DirectX::TexMetadata& outTexMetadata);
 	static void ConvertMetadata(const DirectX::TexMetadata& metadata, OpenGLMetadata& outMetadata);
 
 private:

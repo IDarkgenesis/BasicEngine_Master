@@ -6,6 +6,7 @@
 #include "Application.h"
 #include "ModuleTexture.h"
 #include "glew-2.1.0/include/GL/glew.h"
+#include "DirectXTex/DirectXTex.h"
 
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #define TINYGLTF_NO_STB_IMAGE
@@ -117,6 +118,8 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 	for (const auto& srcMaterial : sourceModel.materials)
 	{
 		unsigned int textureId = 0;
+		float2 widthHeight = float2::zero;
+
 		if (srcMaterial.pbrMetallicRoughness.baseColorTexture.index >= 0)
 		{
 			const tinygltf::Texture& texture = sourceModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
@@ -143,9 +146,16 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			std::wstring wideUri = std::wstring(texturePathString.begin(), texturePathString.end());
 			const wchar_t* texturePath = wideUri.c_str();
 
-			textureId = App->GetTextureModule()->LoadTexture(texturePath);
+			DirectX::TexMetadata textureMetadata;
+			textureId = App->GetTextureModule()->LoadTexture(texturePath, textureMetadata);
+			if (textureId)
+			{
+				widthHeight.x = textureMetadata.width;
+				widthHeight.y = textureMetadata.height;
+			}
 		}
 		textures.push_back(textureId);
+		textureInfo.push_back(widthHeight);
 		renderTexture++;
 	}
 }
@@ -156,12 +166,19 @@ void EngineModel::LoadAdditionalTexture(const char* texturePath)
 	std::wstring widePath = std::wstring(stringPath.begin(), stringPath.end());
 	const wchar_t* wideTexturePath = widePath.c_str();
 
-	unsigned int textureId = App->GetTextureModule()->LoadTexture(wideTexturePath);
+	float2 widthHeight = float2::zero;
+
+	DirectX::TexMetadata textureMetadata;
+	unsigned int textureId = App->GetTextureModule()->LoadTexture(wideTexturePath, textureMetadata);
 
 	if (textureId) 
 	{
+		widthHeight.x = textureMetadata.width;
+		widthHeight.y = textureMetadata.height;
+
 		renderTexture++;
 		textures.push_back(textureId);
+		textureInfo.push_back(widthHeight);
 	}
 }
 
@@ -193,6 +210,7 @@ void EngineModel::ClearVectors()
 
 	meshes.clear();
 	textures.clear();
+	textureInfo.clear();
 
 	renderTexture = -1;
 }
