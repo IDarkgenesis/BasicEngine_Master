@@ -21,7 +21,7 @@ bool ModuleModelViewer::Init()
     programTextures = App->GetProgramModule()->LoadShaders("./RenderExercise/VertexShader.glsl", "./RenderExercise/FragmentShader.glsl");
 
     // LOADING HOUSE MODEL
-    LoadModel("../../ModelsTextures/BakerHouse.gltf");
+    LoadModel("../ModelsTextures/BakerHouse.gltf");
 
     return true;
 }
