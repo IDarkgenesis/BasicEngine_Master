@@ -97,28 +97,8 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         ImGui::PlotHistogram("##milliseconds", &frametime[0], (int)frametime.size(), currentPlotData, title, 0.f, 40.f, ImVec2(310, 100));
 
         ImGui::Separator();
-
-        ImGui::Text("Hardware");
-
-        ImGui::Separator();
-
-        // Displaying cpu info
-        char info[256];
-        sprintf_s(title, 25, "CPUs: ");
-        sprintf_s(info, 256, "%i (Cache: %i kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
-
-        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
-
-        // Ram data 
-        sprintf_s(title, 25, "System RAM: ");
-        float systemRAM = SDL_GetSystemRAM() / 1000.f;
-        sprintf_s(info, 256, "%.1f GB", systemRAM);
-
-        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
-
-        ImGui::Separator();
-
         // Libary versions
+        char info[256];
         SDL_version sldVerstion;
         SDL_GetVersion(&sldVerstion);
 
@@ -133,7 +113,52 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
         sprintf_s(title, 25, "GLSL Version: ");
         ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 
+        ImGui::Separator();
 
+        ImGui::Text("Hardware");
+
+        ImGui::Separator();
+
+        // Displaying cpu info
+        sprintf_s(title, 25, "CPUs: ");
+        sprintf_s(info, 256, "%i (Cache: %i kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        // Ram data 
+        sprintf_s(title, 25, "System RAM: ");
+        float systemRAM = SDL_GetSystemRAM() / 1000.f;
+        sprintf_s(info, 256, "%.1f GB", systemRAM);
+
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        // GPU
+        sprintf_s(title, 25, "GPU: ");
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), (char*)glGetString(GL_RENDERER));
+        
+        ImGui::Separator();
+
+        // Video memory
+        int dedicatedVideoMemory = 0, totalAvailableMemory = 0, currentAvailableMemory = 0;
+        glGetIntegerv(0x9048, &totalAvailableMemory);
+        glGetIntegerv(0x9047, &dedicatedVideoMemory);
+        glGetIntegerv(0x9049, &currentAvailableMemory);
+        
+        sprintf_s(title, 25, "Total VRam: ");
+        sprintf_s(info, 256, "%.1f Mb", totalAvailableMemory / 1000.f);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        sprintf_s(title, 25, "Dedicated VRam: ");
+        sprintf_s(info, 256, "%.1f Mb", dedicatedVideoMemory / 1000.f);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        sprintf_s(title, 25, "Available VRam: ");
+        sprintf_s(info, 256, "%.1f Mb", currentAvailableMemory / 1000.f);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        sprintf_s(title, 25, "Used VRam: ");
+        sprintf_s(info, 256, "%.1f Mb", (totalAvailableMemory - currentAvailableMemory) / 1000.f);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
     }
 
     if (ImGui::CollapsingHeader("Window"))
