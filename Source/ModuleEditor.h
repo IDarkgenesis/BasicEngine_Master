@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Module.h"
+#include <string>
 
 class ModuleEditor : public Module
 {
@@ -17,15 +18,18 @@ public:
 	void Draw();
 	void ConfigMenu(bool& configMenu);
 	void Console(bool& console);
+	void About(bool& aboutMenu);
 
 	void SetNewScreenSize(int newWidth, int newHeight);
 
 private:
-	bool showcaseMenu = false;
+
 	bool configMenu = false;
 	bool consoleMenu = false;
-	
+	bool aboutMenu = false;
 	bool closeApplication = false;
+
+	std::string aboutString;
 
 	// WINDOW VARIABLES
 	int fov = HFOV;

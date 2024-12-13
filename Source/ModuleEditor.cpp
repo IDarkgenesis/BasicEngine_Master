@@ -39,6 +39,8 @@ bool ModuleEditor::Init()
 
     SDL_GetWindowSize(App->GetWindowModule()->window, &width, &height);
 
+    aboutString = std::string("Sobrassada Engine\n\nThis engine allows the visualization of GLTF models.\n\nFor more information visit the Application configuration.\n\nAuthor: Bartomeu Perello Comas\n\n");
+
 	return true;
 }
 
@@ -362,7 +364,6 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
     ImGui::Separator();
 
     if (ImGui::Button("Close Me")) configMenu = false;
-    ImGui::TextLinkOpenURL("https://github.com/");
 
     ImGui::End();
 }
@@ -375,6 +376,17 @@ void ModuleEditor::Console(bool& console)
     {
         ImGui::TextUnformatted(log);
     }
+
+    ImGui::End();
+}
+
+void ModuleEditor::About(bool& aboutMenu)
+{
+    ImGui::Begin("About", &aboutMenu);
+
+    ImGui::Text(aboutString.c_str());
+    
+    ImGui::Text("Git Repository: "); ImGui::SameLine(); ImGui::TextLinkOpenURL("https://github.com/IDarkgenesis/BasicEngine_Master");
 
     ImGui::End();
 }
@@ -394,8 +406,16 @@ void ModuleEditor::Draw()
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu("Menu"))
     {
-        if (ImGui::MenuItem("Gui Demo"))
-            showcaseMenu = !showcaseMenu;
+
+        if (ImGui::MenuItem("Close all windows"))
+        {
+            aboutMenu = false;
+            configMenu = false;
+            consoleMenu = false;
+        }
+
+        if (ImGui::MenuItem("About"))
+            aboutMenu = !aboutMenu;
 
         if (ImGui::MenuItem("Configuration"))
             configMenu = !configMenu;
@@ -409,7 +429,7 @@ void ModuleEditor::Draw()
     }
     ImGui::EndMainMenuBar();
 
-    if (showcaseMenu) ImGui::ShowDemoWindow(&showcaseMenu);
+    if (aboutMenu) About(aboutMenu);
     if (configMenu) ConfigMenu(configMenu);
     if (consoleMenu) Console(consoleMenu);
 
