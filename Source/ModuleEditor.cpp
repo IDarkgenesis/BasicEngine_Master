@@ -116,6 +116,24 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
         ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
 
+        ImGui::Separator();
+
+        // Libary versions
+        SDL_version sldVerstion;
+        SDL_GetVersion(&sldVerstion);
+
+        sprintf_s(title, 25, "SDL Version: ");
+        sprintf_s(info, 256, "%u.%u.%u", sldVerstion.major, sldVerstion.minor, sldVerstion.patch);
+
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        sprintf_s(title, 25, "OpenGL Version: ");
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), (char*)glGetString(GL_VERSION));
+
+        sprintf_s(title, 25, "GLSL Version: ");
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+
     }
 
     if (ImGui::CollapsingHeader("Window"))

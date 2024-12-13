@@ -146,7 +146,7 @@ void EngineModel::LoadRecursive(const tinygltf::Model& sourceModel, const float4
 	{
 		for (int i = 0; i < currentNode.matrix.size(); ++i)
 		{
-			modelMatrix[i / 4][i % 4] = currentNode.matrix[i];
+			modelMatrix[i / 4][i % 4] = (float)currentNode.matrix[i];
 		}
 	}
 	else
@@ -161,7 +161,7 @@ void EngineModel::LoadRecursive(const tinygltf::Model& sourceModel, const float4
 
 		if (currentNode.rotation.size() > 0)
 		{
-			finalRotation = Quat(currentNode.rotation[0], currentNode.rotation[1], currentNode.rotation[2], currentNode.rotation[3]);
+			finalRotation = Quat((float)currentNode.rotation[0], (float)currentNode.rotation[1], (float)currentNode.rotation[2], (float)currentNode.rotation[3]);
 		}
 
 		if (currentNode.translation.size() > 0)
