@@ -20,6 +20,7 @@ public:
 	void Load(const char* modelPath);
 	void LoadMaterials(const tinygltf::Model& sourceModel, const char* modelPath);
 
+
 	void LoadAdditionalTexture(const char* texturePath);
 
 	void Render(int program, float4x4& projectionMatrix, float4x4& viewMatrix);
@@ -42,6 +43,9 @@ private:
 	float3 maxValues;
 	float3 minValues;
 
+	bool firstMesh = true;
+
+	void LoadRecursive(const tinygltf::Model& sourceModel, const float4x4& parentModelMatrix, int currentNodePosition);
 	void ClearVectors();
 };
 

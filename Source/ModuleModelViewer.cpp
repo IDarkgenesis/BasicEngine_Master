@@ -22,6 +22,7 @@ bool ModuleModelViewer::Init()
 
     // LOADING HOUSE MODEL
     LoadModel("../../ModelsTextures/BakerHouse.gltf");
+
     return true;
 }
 

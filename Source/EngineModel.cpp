@@ -42,73 +42,12 @@ void EngineModel::Load(const char* modelPath)
 		GLOG("Error loading %s: %s", modelPath, error.c_str());
 	}
 
-	bool firstMesh = true;
+	// Checking for root node in nodes to start the model loading, if no default scene error in model doc.
+	int rootPosition = model.scenes[model.defaultScene].nodes.size() > 0 ? model.scenes[model.defaultScene].nodes[0] : -1;
+	if (rootPosition < 0) return;
 
-	for (tinygltf::Node currentNode : model.nodes)
-	{
-		if (currentNode.name != "RootNode" && currentNode.mesh >= 0)
-		{
-			// Creating basic model transform matrix based on node information
-			float4x4 rotationX, rotationY, rotationZ, finalRotation;
-			float3 translation, scale;
-
-			finalRotation = float4x4::identity;
-			translation = float3::zero; 
-			scale = float3::one;
-
-			if (currentNode.rotation.size() > 0)
-			{
-				rotationX = float4x4::RotateX((float)currentNode.rotation[0]);
-				rotationY = float4x4::RotateX((float)currentNode.rotation[1]);
-				rotationZ = float4x4::RotateX((float)currentNode.rotation[2]);
-
-				finalRotation = rotationX * rotationY * rotationZ;
-			}
-
-			if (currentNode.translation.size() > 0)
-			{
-				translation = float3((float)currentNode.translation[0], (float)currentNode.translation[1], (float)currentNode.translation[2]);
-			}
-
-			if (currentNode.scale.size() > 0)
-			{
-				scale = float3((float)currentNode.scale[0], (float)currentNode.scale[1], (float)currentNode.scale[2]);
-			}
-
-			float4x4 basicModelMatrix = float4x4::FromTRS(
-				translation,
-				finalRotation,
-				scale
-				);
-
-			for (tinygltf::Primitive& primitive : model.meshes[currentNode.mesh].primitives)
-			{
-				EngineMesh* newMesh = new EngineMesh();
-				newMesh->LoadVBO(model, model.meshes[currentNode.mesh], primitive);
-				if (primitive.indices >= 0) newMesh->LoadEBO(model, model.meshes[currentNode.mesh], primitive);
-				newMesh->CreateVAO();
-
-				float3 meshMaxValues = newMesh->GetMaximumPosition().Mul(scale);
-				float3 meshMinValues = newMesh->GetMinimumPosition().Mul(scale);
-
-				if (firstMesh)
-				{
-					firstMesh = false;
-					maxValues = meshMaxValues;
-					minValues = meshMinValues;
-				}
-				else
-				{
-					maxValues = float3(Max(maxValues.x, meshMaxValues.x), Max(maxValues.y, meshMaxValues.y), Max(maxValues.z, meshMaxValues.z));
-					minValues = float3(Min(minValues.x, meshMinValues.x), Min(minValues.y, meshMinValues.y), Min(minValues.z, meshMinValues.z));
-				}
-
-				newMesh->SetBasicModelMatrix(basicModelMatrix);
-				
-				meshes.push_back(newMesh);
-			}
-		}
-	}
+	float4x4 basicModelMatrix = float4x4::identity;
+	LoadRecursive(model, basicModelMatrix, rootPosition);
 
 	LoadMaterials(model, modelPath);
 }
@@ -194,6 +133,95 @@ void EngineModel::Render(int program, float4x4& projectionMatrix, float4x4& view
 void EngineModel::SetRenderTexture(int texturePosition)
 {
 	renderTexture = texturePosition;
+}
+
+void EngineModel::LoadRecursive(const tinygltf::Model& sourceModel, const float4x4& parentModelMatrix, int currentNodePosition)
+{
+	const tinygltf::Node currentNode = sourceModel.nodes[currentNodePosition];
+
+	// Creating basic model transform matrix if matrix data exists
+	float4x4 modelMatrix = float4x4::identity;
+
+	if (currentNode.matrix.size() > 0)
+	{
+		for (int i = 0; i < currentNode.matrix.size(); ++i)
+		{
+			modelMatrix[i / 4][i % 4] = currentNode.matrix[i];
+		}
+	}
+	else
+	{
+		// Creating basic model transform matrix based on tranlation, rotation and scale information
+		Quat finalRotation;
+		float3 translation, scale;
+
+		translation = float3::zero;
+		scale = float3::one;
+		finalRotation = Quat(0, 0, 0, 1);
+
+		if (currentNode.rotation.size() > 0)
+		{
+			finalRotation = Quat(currentNode.rotation[0], currentNode.rotation[1], currentNode.rotation[2], currentNode.rotation[3]);
+		}
+
+		if (currentNode.translation.size() > 0)
+		{
+			translation = float3((float)currentNode.translation[0], (float)currentNode.translation[1], (float)currentNode.translation[2]);
+		}
+
+		if (currentNode.scale.size() > 0)
+		{
+			scale = float3((float)currentNode.scale[0], (float)currentNode.scale[1], (float)currentNode.scale[2]);
+		}
+
+		modelMatrix = float4x4::FromTRS(
+			translation,
+			finalRotation,
+			scale
+		);
+	}
+
+	// Apply parentModelMatrix to current node one
+	modelMatrix = parentModelMatrix * modelMatrix;
+
+	// If this node contains meshes then load them and apply the parents model matrix
+	if (currentNode.mesh >= 0)
+	{
+		for (const tinygltf::Primitive& primitive : sourceModel.meshes[currentNode.mesh].primitives)
+		{
+			EngineMesh* newMesh = new EngineMesh();
+			newMesh->LoadVBO(sourceModel, sourceModel.meshes[currentNode.mesh], primitive);
+			if (primitive.indices >= 0) newMesh->LoadEBO(sourceModel, sourceModel.meshes[currentNode.mesh], primitive);
+			newMesh->CreateVAO();
+
+			float3 meshMaxValues = modelMatrix.MulPos(newMesh->GetMaximumPosition());
+			float3 meshMinValues = modelMatrix.MulPos(newMesh->GetMinimumPosition());
+
+			if (firstMesh)
+			{
+				firstMesh = false;
+				maxValues = meshMaxValues;
+				minValues = meshMinValues;
+			}
+			else
+			{
+				maxValues = float3(Max(maxValues.x, meshMaxValues.x), Max(maxValues.y, meshMaxValues.y), Max(maxValues.z, meshMaxValues.z));
+				minValues = float3(Min(minValues.x, meshMinValues.x), Min(minValues.y, meshMinValues.y), Min(minValues.z, meshMinValues.z));
+			}
+
+			newMesh->SetBasicModelMatrix(modelMatrix);
+
+			meshes.push_back(newMesh);
+		}
+	}
+
+	// If this node contains children, send Load function to each one with current modelMatrix
+	if (currentNode.children.size() > 0)
+	{
+		for (int i = 0; i < currentNode.children.size(); ++i) LoadRecursive(sourceModel, modelMatrix, currentNode.children[i]);
+	}
+
+	return;
 }
 
 void EngineModel::ClearVectors()
