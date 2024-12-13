@@ -84,6 +84,16 @@ int ModuleModelViewer::GetModelRenderTexture() const
     return currentLoadedModel->GetRenderTexture();
 }
 
+int ModuleModelViewer::GetModelIndexCount() const
+{
+    return currentLoadedModel->GetIndexCount();
+}
+
+void ModuleModelViewer::GetModelTextureSize(float2& outTextureSize)
+{
+    currentLoadedModel->GetTextureSize(outTextureSize);
+}
+
 void ModuleModelViewer::SetModelRenderTexture(int renderTexture)
 {
     currentLoadedModel->SetRenderTexture(renderTexture);

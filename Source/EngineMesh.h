@@ -23,6 +23,8 @@ public:
 	float3 GetMaximumPosition() const { return maximumPosition; } 
 	float3 GetMinimumPosition() const { return minimumPosition; }
 
+	int GetIndexCount() const { return indexCount; }
+
 	void SetBasicModelMatrix(float4x4& newModelMatrix);
 
 	void Render(int program, int texturePosition, float4x4& projectionMatrix, float4x4& viewMatrix);
@@ -34,7 +36,7 @@ private:
 
 	int vertexCount = 0;
 	int textureCoordCount = 0;
-	unsigned int indexCount = 0;
+	unsigned int indexCount = 0; // Return indexCount/3 -> numero de triangles per mesh
 
 	float4x4 basicModelMatrix;
 

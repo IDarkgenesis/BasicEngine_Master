@@ -142,6 +142,15 @@ void EngineModel::Render(int program, float4x4& projectionMatrix, float4x4& view
 	}
 }
 
+void EngineModel::GetTextureSize(float2& outTextureSize)
+{
+	if (renderTexture > -1)
+	{
+		outTextureSize.x = textureInfo[renderTexture].x;
+		outTextureSize.y = textureInfo[renderTexture].y;
+	}
+}
+
 void EngineModel::SetRenderTexture(int texturePosition)
 {
 	renderTexture = texturePosition;
@@ -222,7 +231,8 @@ void EngineModel::LoadRecursive(const tinygltf::Model& sourceModel, const float4
 			}
 
 			newMesh->SetBasicModelMatrix(modelMatrix);
-
+			
+			indexCount += newMesh->GetIndexCount();
 			meshes.push_back(newMesh);
 		}
 	}
@@ -253,6 +263,6 @@ void EngineModel::ClearVectors()
 	textureInfo.clear();
 	
 	firstMesh = true;
-
+	indexCount = 0;
 	renderTexture = -1;
 }

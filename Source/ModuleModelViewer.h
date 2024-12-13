@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Module.h"
-#include "MathGeoLib/include/Math/float3.h"
+#include "MathGeoLib/include/Math/float2.h"
 
 class EngineModel;
-
 
 class ModuleModelViewer : public Module
 {
@@ -24,6 +23,9 @@ public:
 
 		int GetModelLoadedTextures() const;
 		int GetModelRenderTexture() const;
+		int GetModelIndexCount() const;
+		void GetModelTextureSize(float2& outTextureSize);
+
 		void SetModelRenderTexture(int renderTexture);
 
 private:

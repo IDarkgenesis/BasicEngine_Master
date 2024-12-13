@@ -262,16 +262,40 @@ void ModuleEditor::ConfigMenu(bool& configMenu)
 
     if (ImGui::CollapsingHeader("Textures"))
     {
-        int totalLoadedTextures = App->GetModelViewerModule()->GetModelLoadedTextures();
-        int currentLoadedTexture = App->GetModelViewerModule()->GetModelRenderTexture();
+        ModuleModelViewer* modelViewer = App->GetModelViewerModule();
+
+        int totalLoadedTextures = modelViewer->GetModelLoadedTextures();
+        int currentLoadedTexture = modelViewer->GetModelRenderTexture();
         currentLoadedTexture = currentLoadedTexture < 0 ? 0 : currentLoadedTexture;
         bool disableSlider = totalLoadedTextures < 2;
 
         if (disableSlider) ImGui::BeginDisabled();
 
-        if (ImGui::SliderInt("Select texture to render", &currentLoadedTexture, 0, totalLoadedTextures - 1)) App->GetModelViewerModule()->SetModelRenderTexture(currentLoadedTexture);
+        if (ImGui::SliderInt("Select texture to render", &currentLoadedTexture, 0, totalLoadedTextures - 1)) modelViewer->SetModelRenderTexture(currentLoadedTexture);
 
         if (disableSlider) ImGui::EndDisabled();
+        // Model and texture info
+
+        int triangleCount = modelViewer->GetModelIndexCount() / 3;
+        
+        float2 textureSize = float2::zero;
+        modelViewer->GetModelTextureSize(textureSize);
+
+        char title[25];
+        char info[256];
+
+        sprintf_s(title, 25, "Total triangles: ");
+        sprintf_s(info, 256, "%i", triangleCount);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        sprintf_s(title, 25, "Texture Width: ");
+        sprintf_s(info, 256, "%i", (int)textureSize.x);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
+        sprintf_s(title, 25, "Texture Height: ");
+        sprintf_s(info, 256, "%i", (int)textureSize.y);
+        ImGui::Text(title); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), info);
+
     }
 
     if (ImGui::CollapsingHeader("Camera"))
