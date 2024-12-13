@@ -1,5 +1,4 @@
 #include "EngineModel.h"
-
 #include "Globals.h"
 #include "EngineMesh.h"
 #include "MathGeoLib.h"
@@ -7,6 +6,8 @@
 #include "ModuleTexture.h"
 #include "glew-2.1.0/include/GL/glew.h"
 #include "DirectXTex/DirectXTex.h"
+#include <string>
+#include <unordered_set>
 
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #define TINYGLTF_NO_STB_IMAGE
@@ -54,15 +55,22 @@ void EngineModel::Load(const char* modelPath)
 
 void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* modelPath)
 {
+	// Check to not load multiple times the same texture
+	std::unordered_set<int> loadedIndices;
 	for (const auto& srcMaterial : sourceModel.materials)
 	{
 		unsigned int textureId = 0;
 		float2 widthHeight = float2::zero;
-
-		if (srcMaterial.pbrMetallicRoughness.baseColorTexture.index >= 0)
+		
+		int textureIndex = srcMaterial.pbrMetallicRoughness.baseColorTexture.index;
+		
+		if (textureIndex >= 0)
 		{
-			const tinygltf::Texture& texture = sourceModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
+			const tinygltf::Texture& texture = sourceModel.textures[textureIndex];
 			const tinygltf::Image& image = sourceModel.images[texture.source];
+
+			// Do not load the same texture twice
+			if (loadedIndices.find(texture.source) != loadedIndices.end()) return;
 
 			std::string filePath = std::string(modelPath);
 			char usedSeparator = '\\';
@@ -91,11 +99,15 @@ void EngineModel::LoadMaterials(const tinygltf::Model& sourceModel, const char* 
 			{
 				widthHeight.x = textureMetadata.width;
 				widthHeight.y = textureMetadata.height;
+				loadedIndices.insert(texture.source);
 			}
 		}
-		textures.push_back(textureId);
-		textureInfo.push_back(widthHeight);
-		renderTexture++;
+		if (textureId)
+		{
+			textures.push_back(textureId);
+			textureInfo.push_back(widthHeight);
+			renderTexture++;
+		}
 	}
 }
 
