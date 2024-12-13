@@ -239,6 +239,8 @@ void EngineModel::ClearVectors()
 	meshes.clear();
 	textures.clear();
 	textureInfo.clear();
+	
+	firstMesh = true;
 
 	renderTexture = -1;
 }
