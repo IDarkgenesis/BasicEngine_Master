@@ -18,10 +18,10 @@ ModuleModelViewer::~ModuleModelViewer()
 bool ModuleModelViewer::Init()
 {
     // Creating program for texutre models
-    programTextures = App->GetProgramModule()->LoadShaders("./RenderExercise/VertexShader.glsl", "./RenderExercise/FragmentShader.glsl");
+    programTextures = App->GetProgramModule()->LoadShaders("./ResourceFiles/ModelViewerShader.vert", "./ResourceFiles/ModelViewerShader.frag");
 
     // LOADING HOUSE MODEL
-    LoadModel("../ModelsTextures/BakerHouse.gltf");
+    LoadModel("./Assets/BakerHouse.gltf");
 
     return true;
 }
