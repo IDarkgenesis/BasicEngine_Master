@@ -30,7 +30,7 @@ void EngineModel::Load(const char* modelPath)
 {
 	ClearVectors();
 
-	GLOG("Loading: %s", modelPath);
+	GLOG("Loading model: %s", modelPath);
 
 	tinygltf::TinyGLTF gltfContext;
 	tinygltf::Model model;
@@ -40,7 +40,7 @@ void EngineModel::Load(const char* modelPath)
 
 	if (!loadOk)
 	{
-		GLOG("Error loading %s: %s", modelPath, error.c_str());
+		GLOG("Error loading model %s: %s", modelPath, error.c_str());
 	}
 
 	// Checking for root node in nodes to start the model loading, if no default scene error in model doc.

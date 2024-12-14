@@ -12,6 +12,7 @@ ModuleTexture::~ModuleTexture()
 
 unsigned int ModuleTexture::LoadTexture(const wchar_t* texturePath, DirectX::TexMetadata& outTexMetadata)
 {
+	GLOG("Loading texture: %s", texturePath)
 	unsigned int textureId = 0;
 
 	DirectX::ScratchImage scratchImage;

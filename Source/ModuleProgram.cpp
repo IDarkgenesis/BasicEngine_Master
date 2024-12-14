@@ -13,6 +13,7 @@ ModuleProgram::~ModuleProgram()
 
 unsigned int ModuleProgram::LoadShaders(const char* vertexPath, const char* fragmentPath)
 {
+	GLOG("Loading shaders")
 	unsigned int program = 0;
 
 	char* vertexShader = LoadShaderSource(vertexPath);
@@ -31,6 +32,7 @@ unsigned int ModuleProgram::LoadShaders(const char* vertexPath, const char* frag
 
 char* ModuleProgram::LoadShaderSource(const char* shaderPath)
 {
+	GLOG("Reading shader: %s", shaderPath)
 	char* data = nullptr;
 	FILE* file = nullptr;
 
@@ -51,7 +53,8 @@ char* ModuleProgram::LoadShaderSource(const char* shaderPath)
 
 unsigned int ModuleProgram::CompileShader(unsigned shaderType, const char* source)
 {
-
+	
+	GLOG("Compiling %s", GL_VERTEX_SHADER == shaderType ? "vertex shader" : "fragment shader")
 	unsigned shaderId = glCreateShader(shaderType);
 	glShaderSource(shaderId, 1, &source, 0);
 	glCompileShader(shaderId);
@@ -61,6 +64,7 @@ unsigned int ModuleProgram::CompileShader(unsigned shaderType, const char* sourc
 
 	if (compileSuccess == GL_FALSE)
 	{
+		GLOG("Error compiling %s", GL_VERTEX_SHADER == shaderType ? "vertex shader" : "fragment shader")
 		int logLenght = 0;
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLenght);
 		if (logLenght > 0)
@@ -78,6 +82,7 @@ unsigned int ModuleProgram::CompileShader(unsigned shaderType, const char* sourc
 
 unsigned int ModuleProgram::CreateProgram(unsigned vertexShader, unsigned fragmentShader)
 {
+	GLOG("Creating shader program")
 	unsigned programId = glCreateProgram();
 	glAttachShader(programId, vertexShader);
 	glAttachShader(programId, fragmentShader);
@@ -88,6 +93,7 @@ unsigned int ModuleProgram::CreateProgram(unsigned vertexShader, unsigned fragme
 
 	if (compileSuccess == GL_FALSE)
 	{
+		GLOG("Error creating shader program")
 		int logLenght = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logLenght);
 
